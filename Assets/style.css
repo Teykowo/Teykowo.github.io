@@ -1,0 +1,17 @@
+/* ---------------------------------------- Variables Definition ---------------------------------------- */
+:root {
+--bg_colour: #BFB8AD;
+--fg_colour: rgb(15, 13, 13);
+--cube_colour: #ff2315;
+--txt_colour: #BFB8AD;
+--title_colour: #BFB8AD;
+--logo_colour: #510D0A;
+}
+/* ------------------------------------------------------------------------------------------------------ */
+
+/* ---------------------------------------- Floating Cubes Space ---------------------------------------- */
+.Floating_Cube_Space_Section{
+    height: 100vh;
+    width: 100vw;
+    background-color: var(--bg_colour);
+}
