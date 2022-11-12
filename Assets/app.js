@@ -1,3 +1,6 @@
+// Javascript doesn't read from top to bottom like python does, so we can make the function call now and define it later.
+main();
+
 // ------------------------------------------------- -Main Function -------------------------------------------------
 // We now define the main function which is called when the script is read.
 function main(){
@@ -14,13 +17,56 @@ function main(){
         // Return now, aborting the rest of the procedure and saving what we can of the website.
         return;
     }
-
+    
     // Define the colour that will be used when erasing, in our case and to allow better control over every element, the background is defined in the body,
     // Thus we can erase content using a rgba colour with alpha = 0. It'll allow us to see the background by having a transparent forground, thankfully, a child element's
     // background colour isn't limited to it's parent's transparancy, so we can have a visible canvas with an invisible parent section.
     glContext.clearColor(0., 0., 0., 0.);
-    // Clear the canvas to start fresh with our current setting.
-    glContext.clear(glContext.COLOR_BUFFER_BIT|glContext.DEPTH_BUFFER_BIT);
+    // Ensure that the clear depth is set to its default value of 1 (clear everything).
+    glContext.clearDepth(1);
+    // Enable depth tests for rendering fragments in front of others, given their depth values.
+    glContext.enable(glContext.DEPTH_TEST);
+    // Depth function is defined to LEQUAL (less or equal depth value will pass in front) to avoid z-fighting.
+    glContext.depthFunc(glContext.LEQUAL);
+
+    // ---------------------------------------------- Shaders Source Codes ----------------------------------------------
+    // To generate graphics we need shaders. Write the source code of each shader, vertex shaders take care of the vertices and generating the texel, 
+    // while the fragment Shaders colour the pixels.
+    // webGL uses special variable qualifiers for shader functions (variable names start with their qualifier's first letter for clarity), here are their definitions:
+    // const – The declaration is of a compile time constant.
+    // attribute – Global variables that may change per vertex, that are passed from the OpenGL application to vertex shaders. 
+    // This qualifier can only be used in vertex shaders. For the shader this is a read-only variable. See Attribute section.
+    // uniform – Global variables that may change per primitive [...], that are passed from the OpenGL application to the shaders. 
+    // This qualifier can be used in both vertex and fragment shaders. For the shaders this is a read-only variable. See Uniform section.
+    // varying – used for interpolated data between a vertex shader and a fragment shader. Available for writing in the vertex shader, 
+    // and read-only in a fragment shader. See Varying section.
+
+    const vertexShaderSourceCode = `
+        // This variable represents the 3D coordinates for each vertex, with a fourth one used in matrix multiplications like translations, and that's used to represent how far
+        // the object is from the camera. This last w value often equals one.
+        attribute vec4 aVertexPosition;  
+
+        // This transformation matrix is both the transform from local space to world space, meaning a translation, scale and/or rotation
+        // to fit in the world with other objects, and from world space to view space, meaning a change in coordinates to align objects with the camera (translation and rotation).
+        uniform mat4 uModelxViewMatrix;
+
+        // The projection matrix is a two step process too, first projection, transformation to clip space, where vertices outside of the specified frustum get clipped.
+        // Second is the perspective division where vertices get squished relative to their distance via division by the w component, thus it doesn't apply if it equals one.
+        uniform mat4 uProjectionMatrix;
+
+        void main() {
+            // Apply all transformations to the vertex and store the result.
+            transformedVertexPosition = uProjectionMatrix * uModelxViewMatrix * aVertexPosition;
+        }
+    `;
+
+    const fragmentShaderSourceCode = `
+        void main(){
+            // Store the pixel colour.
+            fragmentColour = vec4(255.0, 35.0, 21.0, 1.0);
+        }
+    `;
+    // ------------------------------------------------------------------------------------------------------------------
 
     // Create a shader pipeline using our custom functions.
     const shaderPipeline = initShadersPipeline(glContext, vertexShaderSourceCode, fragmentShaderSourceCode)
@@ -28,127 +74,26 @@ function main(){
     // WebGL assigns specific memory locations for shaders buffers, which are used for shaders to read and get their inputs from.
     // The doc motivates storing them together in a dictionary. 
     const pipelineAddresses = {
-        pipeline: shaderPipeline,
+        pipelineAddress: shaderPipeline,
         vertexPositionAddress: glContext.getAttribLocation(shaderPipeline, 'aVertexPosition'),
         ModelxViewMatrixAddress: glContext.getUniformLocation(shaderPipeline, 'uModelxViewMatrix'),
         ProjectionMatrixAddress: glContext.getUniformLocation(shaderPipeline, 'uProjectionMatrix'),
     };
-}
-// ------------------------------------------------------------------------------------------------------------------
-
-// ----------------------------------------- Buffering and Scenes rendering -----------------------------------------
-function buffering(glContext){
-    // Create a buffer object instance for holding vertices coordinates.
-    const positionBuffer = glContext.createBuffer();
-    // Bind the buffer to the context.
-    glContext.bindBuffer(glContext.ARRAY_BUFFER, positionBuffer);
 
     // For now we write in hard each face (because of different colours for each face), we should be able to load .obj files.
-    const positions = [-1.0, -1.0,  1.0,
-                        1.0, -1.0,  1.0,
-                        1.0,  1.0,  1.0,
-                        -1.0,  1.0,  1.0,
-                    
-                        -1.0, -1.0, -1.0,
-                        -1.0,  1.0, -1.0,
-                        1.0,  1.0, -1.0,
-                        1.0, -1.0, -1.0,
-                    
-                        -1.0,  1.0, -1.0,
-                        -1.0,  1.0,  1.0,
-                        1.0,  1.0,  1.0,
-                        1.0,  1.0, -1.0,
-                    
-                        -1.0, -1.0, -1.0,
-                        1.0, -1.0, -1.0,
-                        1.0, -1.0,  1.0,
-                        -1.0, -1.0,  1.0,
-                    
-                        1.0, -1.0, -1.0,
-                        1.0,  1.0, -1.0,
-                        1.0,  1.0,  1.0,
-                        1.0, -1.0,  1.0,
-                    
-                        -1.0, -1.0, -1.0,
-                        -1.0, -1.0,  1.0,
-                        -1.0,  1.0,  1.0,
-                        -1.0,  1.0, -1.0
-                    ];
+    const shapeData = [
+        1.0,  1.0,
+       -1.0,  1.0,
+        1.0, -1.0,
+       -1.0, -1.0,
+    ];
 
-      // Fill the buffer with a float 32 array convertion of the vertex list. STATIC_DRAW is used to indicate that the content is to be writen once and used multiple times.
-      glContext.bufferData(glContext.ARRAY_BUFFER, new Float32Array(positions), glContext.STATIC_DRAW);
-    
-      return {position: positionBuffer}
+    // Feed the data to the buffer so that we can render it.
+    buffering(glContext, shapeData);
+
+    // Render the scene.
+    draw(glContext, pipelineAddresses)
 }
-
-function draw(glContext, pipelineAddresses, buffers){
-    // Ensure the correct clear colour.
-    // glContext.clearColor(0, 0, 0, 0);
-    // Ensure that the clear depth is set to its default value of 1 (clear everything).
-    glContext.clearDepth(1);
-    // Enable depth tests for rendering fragments in front of others, given their depth values.
-    glContext.enable(glContext.DEPTH_TEST);
-    // Depth function is defined to LEQUAL (less or equal depth value will pass in front) to avoid z-fighting.
-    glContext.depthFunc(glContext.LEQUAL);
-    // Always start with cleaning the canvas.
-    glContext.clear(glContext.COLOR_BUFFER_BIT|glContext.DEPTH_BUFFER_BIT);
-
-    // Create the projection matrix for the vertex shader.
-    // Define the fov for distortion, in radians; the aspect ratio of the current screen; the frustum limits and the projection matrix, 
-    // which in our case doesn't need to be changed from the identity matrix created by default using mat4's create function.
-    const fov = 45 * Math.PI/180; 
-    const aspectRatio = glContext.canvas.clientWidth / glContext.canvas.clientHeight;
-    const zNear = 0.1;
-    const zFar = 100.0;
-    const projectionMatrix = mat4.create();
-     
-    // glMatrix has a designated function for make perspective transformation matrices efficiently, it will be applied to the matrix given as first argument.
-    mat4.perspective(projectionMatrix, fov, aspectRatio, zNear, zFar);
-
-    // For now we will draw in the center of the canvas, which means a simple identity matrix for the modelxview matrix.
-    const modelxViewMatrix = mat4.create();
-
-    //
-    
-}
-// ------------------------------------------------------------------------------------------------------------------
-
-// ---------------------------------------------- Shaders Source Codes ----------------------------------------------
-// To generate graphics we need shaders. Write the source code of each shader, vertex shaders take care of the vertices and generating the texel, 
-// while the fragment Shaders colour the pixels.
-// webGL uses special variable qualifiers for shader functions (variable names start with their qualifier's first letter for clarity), here are their definitions:
-// const – The declaration is of a compile time constant.
-// attribute – Global variables that may change per vertex, that are passed from the OpenGL application to vertex shaders. 
-// This qualifier can only be used in vertex shaders. For the shader this is a read-only variable. See Attribute section.
-// uniform – Global variables that may change per primitive [...], that are passed from the OpenGL application to the shaders. 
-// This qualifier can be used in both vertex and fragment shaders. For the shaders this is a read-only variable. See Uniform section.
-// varying – used for interpolated data between a vertex shader and a fragment shader. Available for writing in the vertex shader, 
-// and read-only in a fragment shader. See Varying section.
-
-const vertexShaderSourceCode = `
-    // This variable represents the 3D coordinates for each vertex, with a fourth one used in matrix multiplications like translations. This last w value often equals one.
-    attribute vec4 aVertexPosition;  
-
-    // This transformation matrix is both the transform from local space to world space, meaning a translation, scale and/or rotation
-    // to fit in the world with other objects, and from world space to view space, meaning a change in coordinates to align objects with the camera (translation and rotation).
-    uniform mat4 uModelxViewMatrix;
-
-    // The projection matrix is a two step process too, first projection, transformation to clip space, where vertices outside of the specified frustum get clipped.
-    // Second is the perspective division where vertices get squished relative to their distance via division by the w component, thus it doesn't apply if it equals one.
-    uniform mat4 uProjectionMatrix;
-
-    void main() {
-        // Apply all transformations to the vertex and store the result.
-        transformedVertexPosition = uProjectionMatrix * uModelxViewMatrix * aVertexPosition;
-    }
-`;
-
-const fragmentShaderSourceCode = `
-    void main(){
-        // Store the pixel colour.
-        fragmentColour = vec4(255.0, 35.0, 21.0, 1.0)
-    }
-`;
 // ------------------------------------------------------------------------------------------------------------------
 
 // --------------------------------------------- -Shaders context setup ---------------------------------------------
@@ -166,7 +111,7 @@ function loadShader(glContext, shaderType, shaderSourceCode){
         alert('Unable to compile shader: ' + glContext.getShaderInfoLog(shader));
         // Delete the shader object.
         glContext.deleteShader(shader);
-        return;
+        return null;
     }
     return shader;
 }
@@ -189,12 +134,71 @@ function initShadersPipeline(glContext, vertexShaderSourceCode, fragmentShaderSo
     // Check if the shaders pipeline was sucessfully created and linked.
     if (!glContext.getProgramParameter(shaderPipeline, glContext.LINK_STATUS)){
         alert('Unable to configure shaders: ' + glContext.getProgramInfoLog(shaderPipeline));
-        return;
+        return null;
     }
 
     // Return the pipeline.
     return shaderPipeline;
 }
 // ------------------------------------------------------------------------------------------------------------------
-// Javascript doesn't read from top to bottom like python does, so we can make the function call now and define it later.
-main();
+
+// ----------------------------------------------- Buffering Function -----------------------------------------------
+function buffering(glContext, data){
+    // Create a buffer object instance for holding vertices coordinates.
+    const vertexBuffer = glContext.createBuffer();
+    // Bind the buffer to the context.
+    glContext.bindBuffer(glContext.ARRAY_BUFFER, vertexBuffer);
+
+    // Fill the buffer with a float 32 array convertion of the vertex list. STATIC_DRAW is used to indicate that the content is to be writen once and used multiple times.
+    glContext.bufferData(glContext.ARRAY_BUFFER, new Float32Array(data), glContext.STATIC_DRAW);
+}
+// ------------------------------------------------------------------------------------------------------------------
+
+// ------------------------------------------------ Scenes rendering ------------------------------------------------
+function draw(glContext, pipelineAddresses, buffers){
+    // Always start with cleaning the canvas.
+    glContext.clear(glContext.COLOR_BUFFER_BIT|glContext.DEPTH_BUFFER_BIT);
+
+    // Create the projection matrix for the vertex shader.
+    // Define the fov for distortion, in radians; the aspect ratio of the current screen; the frustum limits and the projection matrix, 
+    // which in our case doesn't need to be changed from the identity matrix created by default using mat4's create function.
+    const fov = 45 * Math.PI/180; 
+    const aspectRatio = glContext.canvas.clientWidth / glContext.canvas.clientHeight;
+    const zNear = 0.1;
+    const zFar = 100.0;
+    const projectionMatrix = mat4.create();
+     
+    // glMatrix has a designated function for make perspective transformation matrices efficiently, it will be applied to the matrix given as first argument.
+    mat4.perspective(projectionMatrix, fov, aspectRatio, zNear, zFar);
+
+    // For now we will draw in the center of the canvas, which means a simple identity matrix for the modelxview matrix.
+    const modelxViewMatrix = mat4.create();
+
+    {
+    // Tell the context how the shaders should read from the buffers.
+    const valuesPerIter = 2;
+    const bufferDataType = glContext.FLOAT;
+    const normalize = false;
+    const stride = 0;
+    const offset = 0;
+    glContext.vertexAttribPointer(pipelineAddresses.vertexPositionAddress, valuesPerIter, bufferDataType, normalize, stride, offset);
+    // Attributes need to be enabled to work.
+    glContext.enableVertexAttribArray(pipelineAddresses.vertexPositionAddress);
+    }
+
+    // Specified which pipeline the context should use.
+    glContext.useProgram(pipelineAddresses.pipelineAddress);
+
+    // Set the shader uniforms.
+    glContext.uniformMatrix4fv(pipelineAddresses.ProjectionMatrixAddress, false, projectionMatrix);
+    glContext.uniformMatrix4fv(pipelineAddresses.ModelxViewMatrixAddress, false, modelxViewMatrix);
+    
+    {
+        // Draw the shape contained in the buffer. The drawArrays function need to be given the number of vertices total and from which to start.
+        const offset = 0;
+        const vertexCount = 4;
+        // TRIANGLE_STRIP means the triangles in the mesh share vertices.
+        glContext.drawArrays(glContext.TRIANGLE_STRIP, offset, vertexCount);
+    }
+}
+// ------------------------------------------------------------------------------------------------------------------
