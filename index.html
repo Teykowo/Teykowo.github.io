@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Teyko's</title>
+  <script type="module">import glMatrix from 'https://cdn.skypack.dev/gl-matrix';</script>
   <link rel="stylesheet" href="Assets/style.css">
   <link rel="icon" type="image/png" href="Assets\img\thisIco.png">
 </head>
@@ -13,9 +14,9 @@
 
 <!-- ---------------------------------------------- Floating Cubes Space ---------------------------------------------- -->
 <section id="Floating_Cube_Space_Section">
-    <div class="Background Spawner"> 
+    <canvas id="Background_Spawner"> 
         <div class="Random_Cubes"></div>
-    </div>
+    </canvas>
 </section>
 <!-- ------------------------------------------------------------------------------------------------------------------ -->
 
@@ -37,9 +38,10 @@
 <!-- ------------------------------------------------- Title and Logo ------------------------------------------------- -->
 <section id="Title_Section">
     <div class="Title"> 
-        <img>
+        <!-- <img> -->
         <h></h>
     </div>
 </section>
 <!-- ------------------------------------------------------------------------------------------------------------------ -->
 </html>
+<script src="Assets\app.js"></script>
