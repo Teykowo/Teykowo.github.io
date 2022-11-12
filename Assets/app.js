@@ -45,6 +45,8 @@ function main(){
         // This variable represents the 3D coordinates for each vertex, with a fourth one used in matrix multiplications like translations, and that's used to represent how far
         // the object is from the camera. This last w value often equals one.
         attribute vec4 aVertexPosition;  
+        // Do the same for storing colours of the vertex in rgba format;
+        attribute vec4 aVertexColour;
 
         // This transformation matrix is both the transform from local space to world space, meaning a translation, scale and/or rotation
         // to fit in the world with other objects, and from world space to view space, meaning a change in coordinates to align objects with the camera (translation and rotation).
@@ -54,16 +56,26 @@ function main(){
         // Second is the perspective division where vertices get squished relative to their distance via division by the w component, thus it doesn't apply if it equals one.
         uniform mat4 uProjectionMatrix;
 
+        // This varying variable is used to share data from a vertex shader to a fragment shader, and it must be written in the vertex shader. 
+        // After rasterizing, the values are used by the fragment shader to interpolate the colour of the fragment using the vertices that composes it.
+        varying lowp vec4 vColour;
+
         void main() {
-            // Apply all transformations to the vertex and store the result.
-            transformedVertexPosition = uProjectionMatrix * uModelxViewMatrix * aVertexPosition;
+            // Apply all transformations to the vertex and store the result. 
+            //shader output variable names are imposed by openGL so that it can be accessed and passed to other processes.
+            gl_Position  = uProjectionMatrix * uModelxViewMatrix * aVertexPosition;
+            // Set the varying colour vector that will be used by the fragment shader as the vertex colour vector passed as input to the vertex shader.
+            vColour = aVertexColour;
         }
     `;
 
     const fragmentShaderSourceCode = `
+        // Fetch the varying colour vector.
+        varying lowp vec4 vColour;
+        
         void main(){
             // Store the pixel colour.
-            fragmentColour = vec4(255.0, 35.0, 21.0, 1.0);
+            gl_FragColor  = vColour;
         }
     `;
     // ------------------------------------------------------------------------------------------------------------------
@@ -74,25 +86,35 @@ function main(){
     // WebGL assigns specific memory locations for shaders buffers, which are used for shaders to read and get their inputs from.
     // The doc motivates storing them together in a dictionary. 
     const pipelineAddresses = {
-        pipelineAddress: shaderPipeline,
-        vertexPositionAddress: glContext.getAttribLocation(shaderPipeline, 'aVertexPosition'),
-        ModelxViewMatrixAddress: glContext.getUniformLocation(shaderPipeline, 'uModelxViewMatrix'),
-        ProjectionMatrixAddress: glContext.getUniformLocation(shaderPipeline, 'uProjectionMatrix'),
+        "pipelineAddress": shaderPipeline,
+        "vertexPositionAddress": glContext.getAttribLocation(shaderPipeline, 'aVertexPosition'),
+        "vertexColourAddress": glContext.getAttribLocation(shaderPipeline, 'aVertexColour'),
+        "ModelxViewMatrixAddress": glContext.getUniformLocation(shaderPipeline, 'uModelxViewMatrix'),
+        "ProjectionMatrixAddress": glContext.getUniformLocation(shaderPipeline, 'uProjectionMatrix'),
     };
 
-    // For now we write in hard each face (because of different colours for each face), we should be able to load .obj files.
-    const shapeData = [
+    // For now we write in hard each vertex and their colours, we should be able to load .obj files.
+    const vertexData = [
         1.0,  1.0,
        -1.0,  1.0,
         1.0, -1.0,
        -1.0, -1.0,
     ];
+    // The colour matrix has one column for each value in the RGBA format. The only caveat is that it has to be in % of total colour.
+    const vertexColoursData = [
+        54.0/83, 4.0/83, 25.0/83, 1.0,
+        255.0/311, 35.0/311, 21.0/311, 1.0,
+        54.0/83, 4.0/83, 25.0/83, 1.0,
+        54.0/83, 4.0/83, 25.0/83, 1.0,
+    ];
 
-    // Feed the data to the buffer so that we can render it.
-    buffering(glContext, shapeData);
+    // Generate a buffer and feed it the data so that we can render it.
+    vertexBuffer = buffering(glContext, vertexData);
+    colourBuffer = buffering(glContext, vertexColoursData);
+    bufferLibrary = {"vertexBuffer": vertexBuffer, "colourBuffer": colourBuffer};
 
     // Render the scene.
-    draw(glContext, pipelineAddresses)
+    draw(glContext, pipelineAddresses, bufferLibrary)
 }
 // ------------------------------------------------------------------------------------------------------------------
 
@@ -145,12 +167,14 @@ function initShadersPipeline(glContext, vertexShaderSourceCode, fragmentShaderSo
 // ----------------------------------------------- Buffering Function -----------------------------------------------
 function buffering(glContext, data){
     // Create a buffer object instance for holding vertices coordinates.
-    const vertexBuffer = glContext.createBuffer();
+    const bufferObject = glContext.createBuffer();
     // Bind the buffer to the context.
-    glContext.bindBuffer(glContext.ARRAY_BUFFER, vertexBuffer);
+    glContext.bindBuffer(glContext.ARRAY_BUFFER, bufferObject);
 
     // Fill the buffer with a float 32 array convertion of the vertex list. STATIC_DRAW is used to indicate that the content is to be writen once and used multiple times.
     glContext.bufferData(glContext.ARRAY_BUFFER, new Float32Array(data), glContext.STATIC_DRAW);
+
+    return bufferObject;
 }
 // ------------------------------------------------------------------------------------------------------------------
 
@@ -174,17 +198,35 @@ function draw(glContext, pipelineAddresses, buffers){
     // For now we will draw in the center of the canvas, which means a simple identity matrix for the modelxview matrix.
     const modelxViewMatrix = mat4.create();
 
+    // We need to move the object to where it's rendered depth-wise. As for all the mat4 functions, the first argument is the receiving matrix.
+    mat4.translate(modelxViewMatrix, modelxViewMatrix, [-0.0, 0.0, -6.0]);
+
+    // ------------------------------------- Buffer reading -------------------------------------
     {
-    // Tell the context how the shaders should read from the buffers.
+    // Tell the context how the vertex shader should read from the vertex buffer.
     const valuesPerIter = 2;
     const bufferDataType = glContext.FLOAT;
     const normalize = false;
     const stride = 0;
     const offset = 0;
+    glContext.bindBuffer(glContext.ARRAY_BUFFER, buffers.vertexBuffer);
     glContext.vertexAttribPointer(pipelineAddresses.vertexPositionAddress, valuesPerIter, bufferDataType, normalize, stride, offset);
     // Attributes need to be enabled to work.
     glContext.enableVertexAttribArray(pipelineAddresses.vertexPositionAddress);
     }
+    {
+    // Tell the context how the vertex shaders should read from the colour buffer.
+    const valuesPerIter = 4;
+    const bufferDataType = glContext.FLOAT;
+    const normalize = false;
+    const stride = 0;
+    const offset = 0;
+    glContext.bindBuffer(glContext.ARRAY_BUFFER, buffers.colourBuffer);
+    glContext.vertexAttribPointer(pipelineAddresses.vertexColourAddress, valuesPerIter, bufferDataType, normalize, stride, offset);
+    // Attributes need to be enabled to work.
+    glContext.enableVertexAttribArray(pipelineAddresses.vertexColourAddress);
+    }
+    // ------------------------------------------------------------------------------------------
 
     // Specified which pipeline the context should use.
     glContext.useProgram(pipelineAddresses.pipelineAddress);
