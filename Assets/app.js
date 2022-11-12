@@ -1,3 +1,5 @@
+// Define the animation variables here.
+var rotation = 0.0;
 // Javascript doesn't read from top to bottom like python does, so we can make the function call now and define it later.
 main();
 
@@ -93,28 +95,88 @@ function main(){
         "ProjectionMatrixAddress": glContext.getUniformLocation(shaderPipeline, 'uProjectionMatrix'),
     };
 
+    // ------------------------------------------------ -Data Generation ------------------------------------------------
     // For now we write in hard each vertex and their colours, we should be able to load .obj files.
     const vertexData = [
-        1.0,  1.0,
-       -1.0,  1.0,
-        1.0, -1.0,
-       -1.0, -1.0,
+        -1.0, -1.0,  1.0,
+        1.0, -1.0,  1.0,
+        1.0,  1.0,  1.0,
+        -1.0,  1.0,  1.0,
+
+        -1.0, -1.0, -1.0,
+        -1.0,  1.0, -1.0,
+        1.0,  1.0, -1.0,
+        1.0, -1.0, -1.0,
+
+        -1.0,  1.0, -1.0,
+        -1.0,  1.0,  1.0,
+        1.0,  1.0,  1.0,
+        1.0,  1.0, -1.0,
+
+        -1.0, -1.0, -1.0,
+        1.0, -1.0, -1.0,
+        1.0, -1.0,  1.0,
+        -1.0, -1.0,  1.0,
+
+        1.0, -1.0, -1.0,
+        1.0,  1.0, -1.0,
+        1.0,  1.0,  1.0,
+        1.0, -1.0,  1.0,
+
+        -1.0, -1.0, -1.0,
+        -1.0, -1.0,  1.0,
+        -1.0,  1.0,  1.0,
+        -1.0,  1.0, -1.0,
     ];
+
     // The colour matrix has one column for each value in the RGBA format. The only caveat is that it has to be in % of total colour.
-    const vertexColoursData = [
-        54.0/83, 4.0/83, 25.0/83, 1.0,
-        255.0/311, 35.0/311, 21.0/311, 1.0,
-        54.0/83, 4.0/83, 25.0/83, 1.0,
-        54.0/83, 4.0/83, 25.0/83, 1.0,
+    const facesColours = [
+        [54.0/83, 4.0/83, 25.0/83, 1.0],
+        [54.0/94, 15.0/94, 25.0/94, 1.0],
+        [200.256, 35.0/256, 21.0/256, 1.0],
+        [255.0/311, 35.0/311, 21.0/311, 1.0],
+        [54.0/108, 4.0/108, 50.0/108, 1.0],
+        [100.0/56, 35.0/56, 21.0/56, 1.0],
     ];
+    // We make and fill an array with the colour of the faces for each of this face's vertex (since colours are per vertex).
+    var vertexColoursData = [];
+    for (var i = 0; i < facesColours.length; i++) {
+        const vertexColour = facesColours[i];
+        // Repeat each color four times for the four vertices of the face
+        vertexColoursData = vertexColoursData.concat(vertexColour, vertexColour, vertexColour, vertexColour);
+    }
 
+    // This array defines the triangles of the object's mesh using the indices pointing to specific vertices in the vertex array.
+    const triangleMeshVertexIndices = [
+        0,  1,  2,      0,  2,  3, 
+        4,  5,  6,      4,  6,  7, 
+        8,  9,  10,     8,  10, 11,
+        12, 13, 14,     12, 14, 15,
+        16, 17, 18,     16, 18, 19,
+        20, 21, 22,     20, 22, 23,
+    ];
+    
+    
+    // ------------------------------------------------------------------------------------------------------------------
     // Generate a buffer and feed it the data so that we can render it.
-    vertexBuffer = buffering(glContext, vertexData);
-    colourBuffer = buffering(glContext, vertexColoursData);
-    bufferLibrary = {"vertexBuffer": vertexBuffer, "colourBuffer": colourBuffer};
+    vertexBuffer = buffering(glContext, vertexData, "ARRAY_BUFFER", "Float32Array");
+    colourBuffer = buffering(glContext, vertexColoursData, "ARRAY_BUFFER", "Float32Array");
+    meshVertexIndicesBuffer = buffering(glContext, triangleMeshVertexIndices, "ELEMENT_ARRAY_BUFFER", "Uint16Array")
+    bufferLibrary = {"vertexBuffer": vertexBuffer, "colourBuffer": colourBuffer, "meshVertexIndicesBuffer": meshVertexIndicesBuffer};
 
-    // Render the scene.
-    draw(glContext, pipelineAddresses, bufferLibrary)
+
+    // Render the scene repeatedly using a recurcive function.
+    var oldTime = 0;
+    function renderingLoop(currentTime) {
+        currentTime *= 0.001;
+        const deltaTime = currentTime - oldTime;
+        oldTime = currentTime;
+    
+        draw(glContext, pipelineAddresses, bufferLibrary, deltaTime);
+    
+        requestAnimationFrame(renderingLoop);
+    }
+    requestAnimationFrame(renderingLoop);
 }
 // ------------------------------------------------------------------------------------------------------------------
 
@@ -165,21 +227,29 @@ function initShadersPipeline(glContext, vertexShaderSourceCode, fragmentShaderSo
 // ------------------------------------------------------------------------------------------------------------------
 
 // ----------------------------------------------- Buffering Function -----------------------------------------------
-function buffering(glContext, data){
+function buffering(glContext, data, bufferType, dataType){
     // Create a buffer object instance for holding vertices coordinates.
     const bufferObject = glContext.createBuffer();
     // Bind the buffer to the context.
-    glContext.bindBuffer(glContext.ARRAY_BUFFER, bufferObject);
+    if (bufferType === "ELEMENT_ARRAY_BUFFER"){
+        glContext.bindBuffer(glContext.ELEMENT_ARRAY_BUFFER, bufferObject);
+    } else {
+        glContext.bindBuffer(glContext.ARRAY_BUFFER, bufferObject);
+    };
 
     // Fill the buffer with a float 32 array convertion of the vertex list. STATIC_DRAW is used to indicate that the content is to be writen once and used multiple times.
-    glContext.bufferData(glContext.ARRAY_BUFFER, new Float32Array(data), glContext.STATIC_DRAW);
+    if (bufferType === "ELEMENT_ARRAY_BUFFER" & dataType === "Uint16Array"){
+        glContext.bufferData(glContext.ELEMENT_ARRAY_BUFFER, new Uint16Array(data), glContext.STATIC_DRAW);
+    } else {
+        glContext.bufferData(glContext.ARRAY_BUFFER, new Float32Array(data), glContext.STATIC_DRAW);
+    };
 
     return bufferObject;
 }
 // ------------------------------------------------------------------------------------------------------------------
 
 // ------------------------------------------------ Scenes rendering ------------------------------------------------
-function draw(glContext, pipelineAddresses, buffers){
+function draw(glContext, pipelineAddresses, buffers, deltaTime){
     // Always start with cleaning the canvas.
     glContext.clear(glContext.COLOR_BUFFER_BIT|glContext.DEPTH_BUFFER_BIT);
 
@@ -197,14 +267,16 @@ function draw(glContext, pipelineAddresses, buffers){
 
     // For now we will draw in the center of the canvas, which means a simple identity matrix for the modelxview matrix.
     const modelxViewMatrix = mat4.create();
-
     // We need to move the object to where it's rendered depth-wise. As for all the mat4 functions, the first argument is the receiving matrix.
-    mat4.translate(modelxViewMatrix, modelxViewMatrix, [-0.0, 0.0, -6.0]);
+    mat4.translate(modelxViewMatrix, modelxViewMatrix, [0.0, 0.0, -8.0]);
+    // We animate our shape with these self explanatory functions.
+    rotation += deltaTime;
+    mat4.rotate(modelxViewMatrix, modelxViewMatrix, rotation, [0.7, 0.7, 0.7]);
 
     // ------------------------------------- Buffer reading -------------------------------------
     {
     // Tell the context how the vertex shader should read from the vertex buffer.
-    const valuesPerIter = 2;
+    const valuesPerIter = 3;
     const bufferDataType = glContext.FLOAT;
     const normalize = false;
     const stride = 0;
@@ -235,12 +307,14 @@ function draw(glContext, pipelineAddresses, buffers){
     glContext.uniformMatrix4fv(pipelineAddresses.ProjectionMatrixAddress, false, projectionMatrix);
     glContext.uniformMatrix4fv(pipelineAddresses.ModelxViewMatrixAddress, false, modelxViewMatrix);
     
+    glContext.bindBuffer(glContext.ELEMENT_ARRAY_BUFFER, buffers.meshVertexIndicesBuffer);
     {
         // Draw the shape contained in the buffer. The drawArrays function need to be given the number of vertices total and from which to start.
         const offset = 0;
-        const vertexCount = 4;
-        // TRIANGLE_STRIP means the triangles in the mesh share vertices.
-        glContext.drawArrays(glContext.TRIANGLE_STRIP, offset, vertexCount);
+        const vertexCount = 36;
+        const type = glContext.UNSIGNED_SHORT;
+        // TRIANGLE_STRIP means the triangles in the mesh share vertices, TRIANGLES mean the triangles are made of the specified, sometimes shared vertices.
+        glContext.drawElements(glContext.TRIANGLES, vertexCount, type, offset);
     }
 }
 // ------------------------------------------------------------------------------------------------------------------
