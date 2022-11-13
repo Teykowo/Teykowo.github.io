@@ -6,6 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Teyko's</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gl-matrix/2.8.1/gl-matrix-min.js" 
+          integrity="sha512-zhHQR0/H5SEBL3Wn6yYSaTTZej12z0hVZKOv3TwCUXT1z5qeqGcXJLLrbERYRScEDDpYIJhPC1fk31gqR783iQ=="
+          crossorigin="anonymous" defer></script>
+  <script src=https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.3.0/math.min.js></script>
+  <script src="Assets\app.js" defer></script>
   <link rel="stylesheet" href="Assets/style.css">
   <link rel="icon" type="image/png" href="Assets\img\thisIco.png">
 </head>
@@ -13,9 +18,9 @@
 
 <!-- ---------------------------------------------- Floating Cubes Space ---------------------------------------------- -->
 <section id="Floating_Cube_Space_Section">
-    <div class="Background Spawner"> 
+    <canvas id="Background_Spawner"> 
         <div class="Random_Cubes"></div>
-    </div>
+    </canvas>
 </section>
 <!-- ------------------------------------------------------------------------------------------------------------------ -->
 
@@ -37,7 +42,7 @@
 <!-- ------------------------------------------------- Title and Logo ------------------------------------------------- -->
 <section id="Title_Section">
     <div class="Title"> 
-        <img>
+        <!-- <img> -->
         <h></h>
     </div>
 </section>

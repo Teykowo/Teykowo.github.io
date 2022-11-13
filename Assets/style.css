@@ -1,6 +1,6 @@
 /* ---------------------------------------- Variables Definition ---------------------------------------- */
 :root {
---bg_colour: #eeeeee;
+--bg_colour: #eee;
 --fg_colour: rgb(15, 13, 13);
 --cube_colour: #ff2315;
 --txt_colour: #BFB8AD;
@@ -15,12 +15,17 @@ body, html {
     margin: 0;
     overflow-x: hidden;
     overflow-y: hidden;
+    background-color: var(--bg_colour);
   }
 /* ---------------------------------------- Floating Cubes Space ---------------------------------------- */
 #Floating_Cube_Space_Section{
-    min-height: 100%;
-    width: 100%;
-    background-color: var(--bg_colour);
+  height: 100%;
+  width: 100%;
+}
+
+#Background_Spawner{
+  min-height: 100%;
+  width: 100%;
 }
 
 .Random_Cubes{
