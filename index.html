@@ -6,18 +6,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Teyko's</title>
+  <link rel="stylesheet" href="Assets/style.css">
+  <!-- ---------------------------------------------- JS Libraries Imports ---------------------------------------------- -->
+  <!-- ------------------------------------------------------------------------------------------------------------------ -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gl-matrix/2.8.1/gl-matrix-min.js" 
           integrity="sha512-zhHQR0/H5SEBL3Wn6yYSaTTZej12z0hVZKOv3TwCUXT1z5qeqGcXJLLrbERYRScEDDpYIJhPC1fk31gqR783iQ=="
           crossorigin="anonymous" defer></script>
   <script src=https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.3.0/math.min.js></script>
+  <script src="Assets\Javascript\buffering.js"></script>
+  <script src="Assets\Javascript\initShadersPipeline.js"></script>
+  <script src="Assets\Javascript\resizeCanvas.js"></script>
+  <script src="Assets\Shaders\fragmentShaderSource.js"></script>
+  <script src="Assets\Shaders\vertexShaderSource.js"></script>
+  <script src="Assets\Buffer_DATA\Cube.js"></script>
+  <script src="Assets\RENDERING_PARAMS.js"></script>
+  <!-- ------------------------------------------------------------------------------------------------------------------ -->
   <script src="Assets\app.js" defer></script>
-  <link rel="stylesheet" href="Assets/style.css">
   <link rel="icon" type="image/png" href="Assets\img\thisIco.png">
 </head>
 <!-- ------------------------------------------------------------------------------------------------------------------ -->
 
 <!-- ---------------------------------------------- Floating Cubes Space ---------------------------------------------- -->
 <section id="Floating_Cube_Space_Section">
+    <video autoplay muted loop><source src="https://giant.gfycat.com/SparseAbandonedIndusriverdolphin.mp4", type="video/mp4"></video>
     <canvas id="Background_Spawner"> 
         <div class="Random_Cubes"></div>
     </canvas>
