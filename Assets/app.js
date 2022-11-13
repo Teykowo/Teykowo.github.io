@@ -168,14 +168,22 @@ function main(){
     // Render the scene repeatedly using a recurcive function.
     var oldTime = 0;
     function renderingLoop(currentTime) {
-        currentTime *= 0.001;
+        // currentTime is first gathered using requestAnimationFrame wich gave us the time in ms since time origin.
+        // Multiplying this value changes the speed of animation transformations, meaning the next frame will have the figure move more or less.
+        currentTime *= 0.0001;
+        // Get the time since last frame.
         const deltaTime = currentTime - oldTime;
+        // And set the old time variable to current time.
         oldTime = currentTime;
+        
+        // Call the draw function.
+        draw(glContext, pipelineAddresses, bufferLibrary, deltaTime, currentTime);
     
-        draw(glContext, pipelineAddresses, bufferLibrary, deltaTime);
-    
+        // Make the function call recursive by recalling the renderingLoop function through requestAnimationFrame.
         requestAnimationFrame(renderingLoop);
     }
+    // This native function takes another function as argument and call it, passing time since time origin as argument to it. requestAnimationFrame is useful as it usually
+    // syncs call frequency with the display refresh rate, it also stops running when the user changes tab or if the animation is running in the background of something else.
     requestAnimationFrame(renderingLoop);
 }
 // ------------------------------------------------------------------------------------------------------------------
@@ -249,7 +257,7 @@ function buffering(glContext, data, bufferType, dataType){
 // ------------------------------------------------------------------------------------------------------------------
 
 // ------------------------------------------------ Scenes rendering ------------------------------------------------
-function draw(glContext, pipelineAddresses, buffers, deltaTime){
+function draw(glContext, pipelineAddresses, buffers, deltaTime, currentTime){
     // Always start with cleaning the canvas.
     glContext.clear(glContext.COLOR_BUFFER_BIT|glContext.DEPTH_BUFFER_BIT);
 
@@ -268,10 +276,10 @@ function draw(glContext, pipelineAddresses, buffers, deltaTime){
     // For now we will draw in the center of the canvas, which means a simple identity matrix for the modelxview matrix.
     const modelxViewMatrix = mat4.create();
     // We need to move the object to where it's rendered depth-wise. As for all the mat4 functions, the first argument is the receiving matrix.
-    mat4.translate(modelxViewMatrix, modelxViewMatrix, [0.0, 0.0, -8.0]);
+    mat4.translate(modelxViewMatrix, modelxViewMatrix, [0.0, 0.0, -20.0/(Math.min(10*currentTime**5, 10)+1)]);
     // We animate our shape with these self explanatory functions.
     rotation += deltaTime;
-    mat4.rotate(modelxViewMatrix, modelxViewMatrix, rotation, [0.7, 0.7, 0.7]);
+    mat4.rotate(modelxViewMatrix, modelxViewMatrix, rotation, [0.2, 0.4, 0.3]);
 
     // ------------------------------------- Buffer reading -------------------------------------
     {
