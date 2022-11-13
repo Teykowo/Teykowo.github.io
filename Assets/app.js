@@ -129,14 +129,9 @@ function main(){
         -1.0,  1.0, -1.0,
     ];
 
-    // The colour matrix has one column for each value in the RGBA format. The only caveat is that it has to be in % of total colour.
+    // The colour matrix has one column for each value in the RGBA format. The only caveat is that it has to be between 0 and 1 to work properly.
     const facesColours = [
-        [54.0/83, 4.0/83, 25.0/83, 1.0],
-        [54.0/94, 15.0/94, 25.0/94, 1.0],
-        [200.256, 35.0/256, 21.0/256, 1.0],
-        [255.0/311, 35.0/311, 21.0/311, 1.0],
-        [54.0/108, 4.0/108, 50.0/108, 1.0],
-        [100.0/56, 35.0/56, 21.0/56, 1.0],
+        [0., 0., 0., 0.],
     ];
     // We make and fill an array with the colour of the faces for each of this face's vertex (since colours are per vertex).
     var vertexColoursData = [];
