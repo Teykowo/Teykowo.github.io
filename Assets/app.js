@@ -1,5 +1,12 @@
-// Define the global variables here.
-var rotation = 0.0;
+// Defined how many cubes (including the main one at the start) we want in our scene.
+var objectCount = 20;
+// Hold the translation vectors of each elements.
+transVList = [];
+// Hold the rotation vectors of each elements.
+rotVList = [];
+// Hold the life spanned by each object.
+objectTimeAlive = [];
+
 // Javascript doesn't read from top to bottom like python does, so we can make the function call now and define it later.
 main();
 
@@ -34,8 +41,11 @@ function main(){
     glContext.enable(glContext.DEPTH_TEST);
     // Depth function is defined to LEQUAL (less or equal depth value will pass in front) to avoid z-fighting.
     glContext.depthFunc(glContext.LEQUAL);
+    // Only render what is visible, the obstructed vertices will be culled and thus the triangles that depend on them too.
+    glContext.enable(glContext.CULL_FACE);
+    glContext.cullFace(glContext.BACK);
 
-    // ---------------------------------------------- Shaders Source Codes ----------------------------------------------
+    // ---------------------------------- Shaders Source Codes ----------------------------------
     // To generate graphics we need shaders. Write the source code of each shader, vertex shaders take care of the vertices and generating the texel, 
     // while the fragment Shaders colour the pixels.
     // webGL uses special variable qualifiers for shader functions (variable names start with their qualifier's first letter for clarity), here are their definitions:
@@ -48,9 +58,9 @@ function main(){
     // and read-only in a fragment shader. See Varying section.
     const vertexShaderSourceCode = vertexShaderSource();
     const fragmentShaderSourceCode = fragmentShaderSource();
-    // ------------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------
 
-    // ------------------------------------------- Shaders Variable Addresses -------------------------------------------
+    // ------------------------------- Shaders Variable Addresses -------------------------------
     // Create a shader pipeline using our custom functions.
     const shaderPipeline = initShadersPipeline(glContext, vertexShaderSourceCode, fragmentShaderSourceCode)
 
@@ -63,9 +73,9 @@ function main(){
         "ModelxViewMatrixAddress": glContext.getUniformLocation(shaderPipeline, 'uModelxViewMatrix'),
         "ProjectionMatrixAddress": glContext.getUniformLocation(shaderPipeline, 'uProjectionMatrix'),
     };
-    // ------------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------
 
-    // ------------------------------------------------ -Data Generation ------------------------------------------------
+    // ------------------------------------ -Data Generation ------------------------------------
     // For now we write in hard each vertex and their colours, we should be able to load .obj files.
     var cubeObj = cube();
     // Vertex coordinates.
@@ -74,36 +84,39 @@ function main(){
     const vertexColoursData = cubeObj[1];
     // This array defines the triangles of the object's mesh using the indices pointing to specific vertices in the vertex array.
     const triangleMeshVertexIndices = cubeObj[2];
-    // ------------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------
 
-    // -------------------------------------------- Buffering Generated Data --------------------------------------------
+    // -------------------------------- Buffering Generated Data --------------------------------
     // Generate a buffer and feed it the data so that we can render it.
     vertexBuffer = buffering(glContext, vertexData, "ARRAY_BUFFER", "Float32Array");
     colourBuffer = buffering(glContext, vertexColoursData, "ARRAY_BUFFER", "Float32Array");
     meshVertexIndicesBuffer = buffering(glContext, triangleMeshVertexIndices, "ELEMENT_ARRAY_BUFFER", "Uint16Array")
     bufferLibrary = {"vertexBuffer": vertexBuffer, "colourBuffer": colourBuffer, "meshVertexIndicesBuffer": meshVertexIndicesBuffer};
-    // ------------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------
 
-    // ------------------------------------------------ -Event Listeners ------------------------------------------------
+    // ------------------------------------ -Event Listeners ------------------------------------
     window.addEventListener('resize', resizeCanvas);
-    // ------------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------
 
-    // ------------------------------------------------- Rendering Loop -------------------------------------------------
+    // ------------------------------------- Rendering Loop -------------------------------------
     // Get the parameters defined in the parameter file.
     const renderingParams = RENDERING_PARAMS();
     // Render the scene repeatedly using a recurcive function.
+
+    // Init a value to take the time each loop.
     var oldTime = 0;
-    function renderingLoop(currentTime) {
-        // currentTime is first gathered using requestAnimationFrame wich gave us the time in ms since time origin.
+    function renderingLoop(timeSinceStart) {
+        // timeSinceStart is first gathered using requestAnimationFrame wich gave us the time in ms since the document's time origin.
         // Multiplying this value changes the speed of animation transformations, meaning the next frame will have the figure move more or less.
-        currentTime *= 0.0001;
+        timeSinceStart *= 0.001; // From ms to s.
+
         // Get the time since last frame.
-        const deltaTime = currentTime - oldTime;
+        const deltaTime = timeSinceStart - oldTime;
         // And set the old time variable to current time.
-        oldTime = currentTime;
-        
+        oldTime = timeSinceStart;
+
         // Call the draw function.
-        draw(glContext, pipelineAddresses, bufferLibrary, deltaTime, currentTime, renderingParams);
+        draw(glContext, pipelineAddresses, bufferLibrary, deltaTime, timeSinceStart/10, renderingParams);
     
         // Make the function call recursive by recalling the renderingLoop function through requestAnimationFrame.
         requestAnimationFrame(renderingLoop);
@@ -111,12 +124,13 @@ function main(){
     // This native function takes another function as argument and call it, passing time since time origin as argument to it. requestAnimationFrame is useful as it usually
     // syncs call frequency with the display refresh rate, it also stops running when the user changes tab or if the animation is running in the background of something else.
     requestAnimationFrame(renderingLoop);
-    // ------------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------
 }
 // ------------------------------------------------------------------------------------------------------------------
 
 // ------------------------------------------------ Scenes rendering ------------------------------------------------
-function draw(glContext, pipelineAddresses, buffers, deltaTime, currentTime, renderingParams){
+function draw(glContext, pipelineAddresses, buffers, deltaTime, timeSinceStart, renderingParams){
+    // -------------------- The perspective matrix is shared for all objects --------------------
     // Always start with cleaning the canvas.
     glContext.clear(glContext.COLOR_BUFFER_BIT|glContext.DEPTH_BUFFER_BIT);
     
@@ -130,14 +144,7 @@ function draw(glContext, pipelineAddresses, buffers, deltaTime, currentTime, ren
                      aspectRatio, 
                      renderingParams.projection.projec_zNear, 
                      renderingParams.projection.projec_zFar);
-
-    // For now we will draw in the center of the canvas, which means a simple identity matrix for the modelxview matrix.
-    const modelxViewMatrix = mat4.create();
-    // We need to move the object to where it's rendered depth-wise. As for all the mat4 functions, the first argument is the receiving matrix.
-    mat4.translate(modelxViewMatrix, modelxViewMatrix, [0.0, 0.0, -20.0/(Math.min(10*currentTime**5, 5)+1)]);
-    // We animate our shape with these self explanatory functions.
-    rotation += deltaTime;
-    mat4.rotate(modelxViewMatrix, modelxViewMatrix, rotation, [0.2, 0.4, 0.3]);
+    // ------------------------------------------------------------------------------------------
 
     // ------------------------------------- Buffer reading -------------------------------------
     // Tell the context how the vertex shader should read from the vertex buffer.
@@ -164,23 +171,66 @@ function draw(glContext, pipelineAddresses, buffers, deltaTime, currentTime, ren
     // Attributes need to be enabled to work.
     glContext.enableVertexAttribArray(pipelineAddresses.vertexColourAddress);
     }
+    // Bind the element buffer that will be read in the drawElements function to render triangles based on vertex indices.
+    glContext.bindBuffer(glContext.ELEMENT_ARRAY_BUFFER, buffers.meshVertexIndicesBuffer);
     // ------------------------------------------------------------------------------------------
 
     // Specified which pipeline the context should use.
     glContext.useProgram(pipelineAddresses.pipelineAddress);
 
-    // Set the shader uniforms.
+    // Set the shader projection uniforms, since it's used for all objects.
     glContext.uniformMatrix4fv(pipelineAddresses.ProjectionMatrixAddress, false, projectionMatrix);
+
+    // ------ Each object generates a rotation speed and is placed somewhere on the canvas ------
+    // Refurbish the list of objects if needed.
+    while (transVList.length < objectCount){
+        var translateVector = [randInterval(-25, 25), randInterval(-15, 15), randInterval(-40, -22)];
+        var rotationVector = [randInterval(0.1, 0.5), randInterval(0.1, 0.5), randInterval(0.1, 0.5)];
+        objectTimeAlive.push(0.0);
+        transVList.push(translateVector);
+        rotVList.push(rotationVector);
+    };
+    // ------------------------------------------------------------------------------------------
+    // ------------------- Each element is drawn using its modelxview matrix -------------------
+    for (i = 0; i < transVList.length; i++){
+        const modelxViewMatrix = mat4.create();
+        transVList[i] = [transVList[i][0]/(1 + 0.01), transVList[i][1]/(1 + 0.01), transVList[i][2]];
+        mat4.translate(modelxViewMatrix, modelxViewMatrix, transVList[i]);
+        mat4.rotate(modelxViewMatrix, modelxViewMatrix, objectTimeAlive[i]/5, rotVList[i]);
+        glContext.uniformMatrix4fv(pipelineAddresses.ModelxViewMatrixAddress, false, modelxViewMatrix);
+
+        let sumPosition = transVList[i].slice(0, 2).reduce((a, b) => a + b);
+        if (sumPosition < 1 & sumPosition > -1 || objectTimeAlive[i] > 10){
+            transVList.splice(i, 1);
+            rotVList.splice(i,1);
+            objectTimeAlive.splice(i, 1);
+        }
+        {
+            glContext.drawElements(glContext.TRIANGLES, 
+                                    renderingParams.draw.draw_vertexCount, 
+                                    renderingParams.draw.draw_type, 
+                                    renderingParams.draw.draw_offset);
+        }
+        objectTimeAlive[i] += deltaTime;
+    }
+    // ------------------------------------------------------------------------------------------
+
+    // For now we will draw in the center of the canvas, which means a simple identity matrix for the modelxview matrix.
+    const modelxViewMatrix = mat4.create();
+    // We need to move the object to where it's rendered depth-wise. As for all the mat4 functions, the first argument is the receiving matrix.
+    mat4.translate(modelxViewMatrix, modelxViewMatrix, [0.0, 0.0, -20.0/(Math.min(10*timeSinceStart**5, 5)+1)]);
+    // We animate our shape with these self explanatory functions. Here rotation increses the objects angle by how much time has passed.
+    mat4.rotate(modelxViewMatrix, modelxViewMatrix, timeSinceStart, [0.2, 0.4, 0.3]);
+
+    // Set the shader ModelxView uniforms, since it depends on the object's.
     glContext.uniformMatrix4fv(pipelineAddresses.ModelxViewMatrixAddress, false, modelxViewMatrix);
-    
-    glContext.bindBuffer(glContext.ELEMENT_ARRAY_BUFFER, buffers.meshVertexIndicesBuffer);
     {
         // Draw the shape contained in the buffer. 
         // TRIANGLE_STRIP means the triangles in the mesh share vertices, TRIANGLES mean the triangles are made of the specified, sometimes shared vertices.
         glContext.drawElements(glContext.TRIANGLES, 
-                               renderingParams.draw.draw_vertexCount, 
-                               renderingParams.draw.draw_type, 
-                               renderingParams.draw.draw_offset);
+                            renderingParams.draw.draw_vertexCount, 
+                            renderingParams.draw.draw_type, 
+                            renderingParams.draw.draw_offset);
 
     }
 }
