@@ -23,7 +23,14 @@ body, html {
   width: 100%;
 }
 
-#Background_Spawner{
+video{
+  object-fit: fill;
+}
+
+video, #Background_Spawner{
+  position: absolute;
+  top: 0px;
+  left:0px;
   min-height: 100%;
   width: 100%;
 }
