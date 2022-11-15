@@ -205,12 +205,12 @@ function draw(glContext, pipelineAddresses, buffers, deltaTime, timeSinceStart, 
         switch(true){
             case (timeSinceStart < 12 && i === 0):
                 sumPosition = 2;
-                transSList = [1, 1, (Math.min(10*(timeSinceStart/8)**5, 15)+1)];
+                transSList = [1, 1, (Math.min(10*(timeSinceStart/10)**5, 15)+1)];
                 transVList[i] = [0.0, 0.0, -20.0]
                 break;
             case (timeSinceStart < 12 && i != 0):
                 sumPosition = transVList[i].slice(0, 2).reduce((a, b) => Math.abs(a) + Math.abs(b));
-                transSList = [(1 + 0.01), (1 + 0.01), 1];
+                transSList = [(1 + timeSinceStart * 0.01), (1 + timeSinceStart * 0.01), 1];
                 break;
             case (timeSinceStart > 12 && timeSinceStart < 12.05):
                 objectCount = 80;
