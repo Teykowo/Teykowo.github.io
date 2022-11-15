@@ -9,7 +9,7 @@ function objectWiseRendering(translationVector, objectTimeAlive, rotationVector,
     // We need to move the object to where it's rendered depth-wise. As for all the mat4 functions, the first argument is the receiving matrix.
     mat4.translate(modelxViewMatrix, modelxViewMatrix, translationVector);
     // We animate our shape with these self explanatory functions. Here rotation increses the objects angle by how much time has passed.
-    mat4.rotate(modelxViewMatrix, modelxViewMatrix, objectTimeAlive/5, rotationVector);
+    mat4.rotate(modelxViewMatrix, modelxViewMatrix, objectTimeAlive/10, rotationVector);
 
     // Set the shader ModelxView uniforms, since it depends on the object's.
     glContext.uniformMatrix4fv(pipelineAddresses.ModelxViewMatrixAddress, false, modelxViewMatrix);

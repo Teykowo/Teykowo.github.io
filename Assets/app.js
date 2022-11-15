@@ -1,13 +1,13 @@
 // Defined how many cubes (including the main one at the start) we want in our scene.
-var objectCount = 20;
+var objectCount = 21;
 // Hold the translation vectors of each elements.
 transVList = [[0.0, 0.0, -20.0]];
 // Hold the rotation vectors of each elements.
-rotVList = [[0.2/2., 0.4/2., 0.3/2.]];
+rotVList = [[0.2, 0.4, 0.3]];
 // Hold the life spanned by each object.
 objectTimeAlive = [0.0];
 // Hold the maximum life span of the object.
-objectLifeSpan = [9];
+objectLifeSpan = [12];
 
 // Javascript doesn't read from top to bottom like python does, so we can make the function call now and define it later.
 main();
@@ -121,7 +121,9 @@ function main(){
         draw(glContext, pipelineAddresses, bufferLibrary, deltaTime, timeSinceStart, renderingParams);
     
         // Make the function call recursive by recalling the renderingLoop function through requestAnimationFrame.
-        requestAnimationFrame(renderingLoop);
+        setTimeout(() => {
+            requestAnimationFrame(renderingLoop);
+          }, 1000 / 60);
     }
     // This native function takes another function as argument and call it, passing time since time origin as argument to it. requestAnimationFrame is useful as it usually
     // syncs call frequency with the display refresh rate, it also stops running when the user changes tab or if the animation is running in the background of something else.
@@ -191,7 +193,7 @@ function draw(glContext, pipelineAddresses, buffers, deltaTime, timeSinceStart, 
         var translateVector = [randInterval(-25., 25.), randInterval(-15., 15.), randInterval(-40., -22.)];
         var rotationVector = [randInterval(0.1, 0.5), randInterval(0.1, 0.5), randInterval(0.1, 0.5)];
         objectTimeAlive.push(0.0);
-        objectLifeSpan.push(randInterval(8.0, 15.0));
+        objectLifeSpan.push(randInterval(30.0, 100.0));
         transVList.push(translateVector);
         rotVList.push(rotationVector);
     };
@@ -199,29 +201,38 @@ function draw(glContext, pipelineAddresses, buffers, deltaTime, timeSinceStart, 
     
     // ------------------- Each element is drawn using its modelxview matrix -------------------
     for (i = 0; i < transVList.length; i++){
-        let sumPosition = transVList[i].slice(0, 2).reduce((a, b) => a + b);
-        if (sumPosition < 1 & sumPosition > -1 || objectTimeAlive[i] > objectLifeSpan[i]){
+        var sumPosition = 0;
+        switch(true){
+            case (timeSinceStart < 12 && i === 0):
+                sumPosition = 2;
+                transSList = [1, 1, (Math.min(10*(timeSinceStart/8)**5, 15)+1)];
+                transVList[i] = [0.0, 0.0, -20.0]
+                break;
+            case (timeSinceStart < 12 && i != 0):
+                sumPosition = transVList[i].slice(0, 2).reduce((a, b) => Math.abs(a) + Math.abs(b));
+                transSList = [(1 + 0.01), (1 + 0.01), 1];
+                break;
+            case (timeSinceStart > 12 && timeSinceStart < 12.05):
+                objectCount = 80;
+                objectLifeSpan[i] = 0;
+                break
+            default:
+                sumPosition = transVList[i].reduce((a, b) => Math.abs(a) + Math.abs(b));
+                transSList = [1, 1, 1];
+                break;
+        }
+
+        transVList[i] = objectWiseRendering(transVList[i], objectTimeAlive[i], rotVList[i], transSList, pipelineAddresses, renderingParams);
+
+        if (sumPosition < 1 || objectTimeAlive[i] > objectLifeSpan[i]){
+            console.log(sumPosition);
             transVList.splice(i, 1);
             objectLifeSpan.splice(i, 1);
             rotVList.splice(i,1);
             objectTimeAlive.splice(i, 1);
         }
-        
-        switch(true){
-            case (timeSinceStart < 10 && i === 0):
-                transSList = [1, 1, (Math.min(10*objectTimeAlive[i]**5, 15)+1)];
-                transVList[i] = [0.0, 0.0, -20.0]
-                break;
-            case (timeSinceStart < 10 && i != 0):
-                transSList = [(1 + 0.01), (1 + 0.01), (1-(1/(1+(2.72**(-1*objectTimeAlive[i]/objectLifeSpan[i]*10))*10000)))];
-                break;
-            default:
-                transSList = [1, 1, (1-(1/(1+(2.72**(-1*objectTimeAlive))*10000)))];
-                break;
-        }
-        transVList[i] = objectWiseRendering(transVList[i], objectTimeAlive[i], rotVList[i], transSList, pipelineAddresses, renderingParams);
-        objectTimeAlive[i] += deltaTime;
 
+        objectTimeAlive[i] += deltaTime;
     }
 }
 // ------------------------------------------------------------------------------------------------------------------
