@@ -1,7 +1,8 @@
 /* ---------------------------------------- Variables Definition ---------------------------------------- */
 :root {
---bg_colour: #eee;
---fg_colour: rgb(15, 13, 13);
+--bg_colour: rgb(235, 236, 237);
+--fg_colour_pre: rgb(0, 0, 0);
+--fg_colour_post: rgb(15, 13, 13);
 --cube_colour: #ff2315;
 --txt_colour: #BFB8AD;
 --title_colour: #BFB8AD;
@@ -17,8 +18,9 @@ body, html {
     overflow-y: hidden;
     background-color: var(--bg_colour);
   }
-/* ---------------------------------------- Floating Cubes Space ---------------------------------------- */
-#Floating_Cube_Space_Section{
+/* ------------------------------------------ WebGL Cube Space ------------------------------------------ */
+section{
+  position: absolute;
   height: 100%;
   width: 100%;
 }
@@ -34,7 +36,54 @@ video, #Background_Spawner{
   min-height: 100%;
   width: 100%;
 }
+/* ------------------------------------------------------------------------------------------------------ */
 
-.Random_Cubes{
-background-color: var(--cube_colour);
+/* ----------------------------------------- Main Body Contents ----------------------------------------- */
+#Main_Body_Section{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
 }
+
+#Background_Cover{
+position: absolute;
+min-height: 100%;
+width: 100%;
+backdrop-filter: blur(2px);
+z-index: 0;
+
+opacity: 0%;
+animation: appear 2s 10s;
+animation-fill-mode: forwards;
+}
+
+#Main_Body{
+  min-height: 100%;
+  min-width: 400px;
+  width: 100%;
+  background-color: var(--fg_colour_pre);
+  z-index: 1;
+  
+  opacity: 0%;
+  animation: shrink 1s 12s, appear 2s 10s;
+  animation-fill-mode: forwards;
+}
+
+@keyframes appear{
+  0% {
+    opacity: 0%;
+  }
+  100%{
+    opacity: 100%;
+  }
+}
+
+@keyframes shrink{
+  0% {
+    width: 100%;
+  }
+  100%{
+    width: 70vw;
+  }
+}
+/* ------------------------------------------------------------------------------------------------------ */

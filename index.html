@@ -17,6 +17,7 @@
   <script src="Assets\Javascript\initShadersPipeline.js"></script>
   <script src="Assets\Javascript\resizeCanvas.js"></script>
   <script src="Assets\Javascript\randInterval.js"></script>
+  <script src="Assets\Javascript\objectWiseRendering.js"></script>
   <script src="Assets\Shaders\fragmentShaderSource.js"></script>
   <script src="Assets\Shaders\vertexShaderSource.js"></script>
   <script src="Assets\Buffer_DATA\Cube.js"></script>
@@ -27,36 +28,29 @@
 </head>
 <!-- ------------------------------------------------------------------------------------------------------------------ -->
 
-<!-- ---------------------------------------------- Floating Cubes Space ---------------------------------------------- -->
+<!-- ---------------------------------------------- WebGL Cube Space ---------------------------------------------- -->
 <section id="Floating_Cube_Space_Section">
     <video autoplay muted loop><source src="https://giant.gfycat.com/SparseAbandonedIndusriverdolphin.mp4", type="video/mp4"></video>
     <canvas id="Background_Spawner"> 
-        <div class="Random_Cubes"></div>
     </canvas>
 </section>
 <!-- ------------------------------------------------------------------------------------------------------------------ -->
 
 <!-- ------------------------------------------------- Main Page Body ------------------------------------------------- -->
 <section id="Main_Body_Section">
-    <div class="BackgroundCover"> </div>
-    <div class="Body">
-        <div class="Body_Subsection"></div>
+    <div id="Background_Cover"> </div>
+    <div id="Main_Body">
+        <!-- <div class="Body_Subsection"></div> -->
     </div>
-</section>
-<!-- ------------------------------------------------------------------------------------------------------------------ -->
-
-<!-- --------------------------------------------------- Intro Cube --------------------------------------------------- -->
-<section id="Intro_Cube_Section">
-    <div class="Cube"> </div>
 </section>
 <!-- ------------------------------------------------------------------------------------------------------------------ -->
 
 <!-- ------------------------------------------------- Title and Logo ------------------------------------------------- -->
-<section id="Title_Section">
-    <div class="Title"> 
+<!-- <section id="Title_Section"> -->
+    <!-- <div class="Title">  -->
         <!-- <img> -->
-        <h></h>
-    </div>
-</section>
+        <!-- <h></h> -->
+    <!-- </div> -->
+<!-- </section> -->
 <!-- ------------------------------------------------------------------------------------------------------------------ -->
 </html>

@@ -1,11 +1,13 @@
 // Defined how many cubes (including the main one at the start) we want in our scene.
 var objectCount = 20;
 // Hold the translation vectors of each elements.
-transVList = [];
+transVList = [[0.0, 0.0, -20.0]];
 // Hold the rotation vectors of each elements.
-rotVList = [];
+rotVList = [[0.2/2., 0.4/2., 0.3/2.]];
 // Hold the life spanned by each object.
-objectTimeAlive = [];
+objectTimeAlive = [0.0];
+// Hold the maximum life span of the object.
+objectLifeSpan = [9];
 
 // Javascript doesn't read from top to bottom like python does, so we can make the function call now and define it later.
 main();
@@ -116,7 +118,7 @@ function main(){
         oldTime = timeSinceStart;
 
         // Call the draw function.
-        draw(glContext, pipelineAddresses, bufferLibrary, deltaTime, timeSinceStart/10, renderingParams);
+        draw(glContext, pipelineAddresses, bufferLibrary, deltaTime, timeSinceStart, renderingParams);
     
         // Make the function call recursive by recalling the renderingLoop function through requestAnimationFrame.
         requestAnimationFrame(renderingLoop);
@@ -127,6 +129,8 @@ function main(){
     // ------------------------------------------------------------------------------------------
 }
 // ------------------------------------------------------------------------------------------------------------------
+
+
 
 // ------------------------------------------------ Scenes rendering ------------------------------------------------
 function draw(glContext, pipelineAddresses, buffers, deltaTime, timeSinceStart, renderingParams){
@@ -184,53 +188,39 @@ function draw(glContext, pipelineAddresses, buffers, deltaTime, timeSinceStart, 
     // ------ Each object generates a rotation speed and is placed somewhere on the canvas ------
     // Refurbish the list of objects if needed.
     while (transVList.length < objectCount){
-        var translateVector = [randInterval(-25, 25), randInterval(-15, 15), randInterval(-40, -22)];
+        var translateVector = [randInterval(-25., 25.), randInterval(-15., 15.), randInterval(-40., -22.)];
         var rotationVector = [randInterval(0.1, 0.5), randInterval(0.1, 0.5), randInterval(0.1, 0.5)];
         objectTimeAlive.push(0.0);
+        objectLifeSpan.push(randInterval(8.0, 15.0));
         transVList.push(translateVector);
         rotVList.push(rotationVector);
     };
     // ------------------------------------------------------------------------------------------
+    
     // ------------------- Each element is drawn using its modelxview matrix -------------------
     for (i = 0; i < transVList.length; i++){
-        const modelxViewMatrix = mat4.create();
-        transVList[i] = [transVList[i][0]/(1 + 0.01), transVList[i][1]/(1 + 0.01), transVList[i][2]];
-        mat4.translate(modelxViewMatrix, modelxViewMatrix, transVList[i]);
-        mat4.rotate(modelxViewMatrix, modelxViewMatrix, objectTimeAlive[i]/5, rotVList[i]);
-        glContext.uniformMatrix4fv(pipelineAddresses.ModelxViewMatrixAddress, false, modelxViewMatrix);
-
         let sumPosition = transVList[i].slice(0, 2).reduce((a, b) => a + b);
-        if (sumPosition < 1 & sumPosition > -1 || objectTimeAlive[i] > 10){
+        if (sumPosition < 1 & sumPosition > -1 || objectTimeAlive[i] > objectLifeSpan[i]){
             transVList.splice(i, 1);
+            objectLifeSpan.splice(i, 1);
             rotVList.splice(i,1);
             objectTimeAlive.splice(i, 1);
         }
-        {
-            glContext.drawElements(glContext.TRIANGLES, 
-                                    renderingParams.draw.draw_vertexCount, 
-                                    renderingParams.draw.draw_type, 
-                                    renderingParams.draw.draw_offset);
+        
+        switch(true){
+            case (timeSinceStart < 10 && i === 0):
+                transSList = [1, 1, (Math.min(10*objectTimeAlive[i]**5, 15)+1)];
+                transVList[i] = [0.0, 0.0, -20.0]
+                break;
+            case (timeSinceStart < 10 && i != 0):
+                transSList = [(1 + 0.01), (1 + 0.01), (1-(1/(1+(2.72**(-1*objectTimeAlive[i]/objectLifeSpan[i]*10))*10000)))];
+                break;
+            default:
+                transSList = [1, 1, (1-(1/(1+(2.72**(-1*objectTimeAlive))*10000)))];
+                break;
         }
+        transVList[i] = objectWiseRendering(transVList[i], objectTimeAlive[i], rotVList[i], transSList, pipelineAddresses, renderingParams);
         objectTimeAlive[i] += deltaTime;
-    }
-    // ------------------------------------------------------------------------------------------
-
-    // For now we will draw in the center of the canvas, which means a simple identity matrix for the modelxview matrix.
-    const modelxViewMatrix = mat4.create();
-    // We need to move the object to where it's rendered depth-wise. As for all the mat4 functions, the first argument is the receiving matrix.
-    mat4.translate(modelxViewMatrix, modelxViewMatrix, [0.0, 0.0, -20.0/(Math.min(10*timeSinceStart**5, 5)+1)]);
-    // We animate our shape with these self explanatory functions. Here rotation increses the objects angle by how much time has passed.
-    mat4.rotate(modelxViewMatrix, modelxViewMatrix, timeSinceStart, [0.2, 0.4, 0.3]);
-
-    // Set the shader ModelxView uniforms, since it depends on the object's.
-    glContext.uniformMatrix4fv(pipelineAddresses.ModelxViewMatrixAddress, false, modelxViewMatrix);
-    {
-        // Draw the shape contained in the buffer. 
-        // TRIANGLE_STRIP means the triangles in the mesh share vertices, TRIANGLES mean the triangles are made of the specified, sometimes shared vertices.
-        glContext.drawElements(glContext.TRIANGLES, 
-                            renderingParams.draw.draw_vertexCount, 
-                            renderingParams.draw.draw_type, 
-                            renderingParams.draw.draw_offset);
 
     }
 }
