@@ -1,6 +1,7 @@
 // Get the delay that's been set for the shrinking animation. We do this by selecting the HTML element, requesting the animation delay property value, and slicing it to only
 // get the first number in seconds (the format is that of a string), we then use parseFloat to convert the string to a float.
 var mainBody = document.querySelector('#Main_Body');
+var backgroundCover = document.querySelector('#Background_Cover');
 var animationDelay = parseFloat(getComputedStyle(mainBody).animationDelay.slice(0, 2));
 // Defined how many cubes (including the main one at the start) we want in our scene.
 var objectCount = 6;
@@ -129,6 +130,12 @@ function main(){
             if (animationDelay > oldTime){
                 animationDelay = oldTime;
                 animationEnd = true;
+
+                mainBody.style.animationDelay = '0s, 0s'
+                mainBody.style.animationDuration = '0s, 0s'
+                
+                backgroundCover.style.animationDelay = '0s'
+                backgroundCover.style.animationDuration = '0s'
             }
         }else{
             localStorage.setItem("introSkipStoredValue", introSkipSwitch.checked);
