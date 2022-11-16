@@ -112,7 +112,7 @@ width: 100%;
 backdrop-filter: blur(2px);
 z-index: 0;
 
-animation: appear 1s 7s;
+animation: appear 1s 6.9s;
 animation-fill-mode: both;
 }
 
@@ -125,7 +125,7 @@ animation-fill-mode: both;
   background-color: var(--fg_colour_pre);
   z-index: 1;
   
-  animation: shrink 1s 8s, appear 1s 7s;
+  animation: shrink 1s 8s, appear 1s 6.9s;
   animation-fill-mode: both;
 }
 
