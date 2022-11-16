@@ -1,5 +1,6 @@
 /* ---------------------------------------- Variables Definition ---------------------------------------- */
 :root {
+--bg_colour_switch: rgb(203, 203, 204);
 --bg_colour: rgb(235, 236, 237);
 --fg_colour_pre: rgb(0, 0, 0);
 --fg_colour_post: rgb(15, 13, 13);
@@ -52,21 +53,18 @@ width: 100%;
 backdrop-filter: blur(2px);
 z-index: 0;
 
-opacity: 0%;
-animation: appear 2s 10s;
-animation-fill-mode: forwards;
+animation: appear 1s 10s;
+animation-fill-mode: both;
 }
 
 #Main_Body{
   min-height: 100%;
   min-width: 400px;
-  width: 100%;
   background-color: var(--fg_colour_pre);
   z-index: 1;
   
-  opacity: 0%;
-  animation: shrink 1s 12s, appear 2s 10s;
-  animation-fill-mode: forwards;
+  animation: shrink 1s 11s, appear 1s 10s;
+  animation-fill-mode: both;
 }
 
 @keyframes appear{
@@ -85,5 +83,64 @@ animation-fill-mode: forwards;
   100%{
     width: 70vw;
   }
+}
+/* ------------------------------------------------------------------------------------------------------ */
+
+/* -------------------------------------------- Intro Switch -------------------------------------------- */
+#IntroSkipSwitch{
+  position: absolute;
+  display: block;
+  width: 60px;
+  height: 34px;
+  left: 0;
+  bottom: 0;
+  z-index: 2;
+}
+
+#IntroSkipSwitch input{
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.Switch_Slider{
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--fg_colour_post);
+  -webkit-transition: .4s;
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.Switch_Slider:before{
+  border-radius: 50%;
+  position: absolute;
+  content: "✖";
+  text-align: center;
+  color: var(--fg_colour_post);
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: var(--bg_colour_switch);
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .Switch_Slider{
+  background-color: var(--bg_colour_switch);
+}
+
+input:checked + .Switch_Slider:before{
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+  background-color: var(--fg_colour_post);
+  content: "✔";
+  color: var(--bg_colour_switch);
 }
 /* ------------------------------------------------------------------------------------------------------ */
