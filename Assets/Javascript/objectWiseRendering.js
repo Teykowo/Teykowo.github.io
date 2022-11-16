@@ -1,10 +1,6 @@
-function objectWiseRendering(translationVector, objectTimeAlive, rotationVector, transformationScalars, pipelineAddresses, renderingParams){
+function objectWiseRendering(translationVector, objectTimeAlive, rotationVector, pipelineAddresses, renderingParams){
     // For now we will draw in the center of the canvas, which means a simple identity matrix for the modelxview matrix.
     const modelxViewMatrix = mat4.create();
-
-    translationVector = [translationVector[0]/transformationScalars[0], 
-                         translationVector[1]/transformationScalars[1], 
-                         translationVector[2]/transformationScalars[2]];
 
     // We need to move the object to where it's rendered depth-wise. As for all the mat4 functions, the first argument is the receiving matrix.
     mat4.translate(modelxViewMatrix, modelxViewMatrix, translationVector);
@@ -22,6 +18,4 @@ function objectWiseRendering(translationVector, objectTimeAlive, rotationVector,
                                 renderingParams.draw.draw_type, 
                                 renderingParams.draw.draw_offset);
     }
-
-    return translationVector;
 }

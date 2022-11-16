@@ -17,8 +17,6 @@ var objectLifeSpan = [animationDelay];
 var skipIntroFloat = 0;
 // Init a value to take the time each loop.
 var oldTime = 0;
-// Define the fps cap.
-var fps = 60;
 // Define whether to end the animation or not.
 var animationEnd = false;
 
@@ -162,9 +160,7 @@ function main(){
         draw(glContext, pipelineAddresses, bufferLibrary, deltaTime, timeSinceStart, renderingParams);
     
         // Make the function call recursive by recalling the renderingLoop function through requestAnimationFrame.
-        setTimeout(() => {
-            requestAnimationFrame(renderingLoop);
-          }, 1000 / fps);
+        requestAnimationFrame(renderingLoop);
     }
     // This native function takes another function as argument and call it, passing time since time origin as argument to it. requestAnimationFrame is useful as it usually
     // syncs call frequency with the display refresh rate, it also stops running when the user changes tab or if the animation is running in the background of something else.
@@ -255,30 +251,28 @@ function draw(glContext, pipelineAddresses, buffers, deltaTime, timeSinceStart, 
     if(timeSinceStart > animationDelay && timeSinceStart < (animationDelay + 0.01)){
         animationEnd = true;
     }
+    
     for (i = 0; i < transVList.length; i++){
         var sumPosition = 0;
         switch(true){
             case (timeSinceStart < animationDelay && i === 0):
                 sumPosition = 2;
-                transSList = [1, 1, (Math.min(10*(timeSinceStart/10)**5, 15)+1)];
-                transVList[i] = [0.0, 0.0, -20.0]
+                transVList[i] = [0, 0, Math.min((-20+((timeSinceStart**4)*0.01)), 0)];
                 break;
             case (timeSinceStart < animationDelay && i != 0):
                 sumPosition = transVList[i].slice(0, 2).reduce((a, b) => Math.abs(a) + Math.abs(b));
-                transSList = [(1 + timeSinceStart * 0.01), (1 + timeSinceStart * 0.01), 1];
+                transVList[i] = [transVList[i][0]/(1 + timeSinceStart * 0.01), transVList[i][1]/(1 + timeSinceStart * 0.01), transVList[i][2]];
                 break;
             case (animationEnd):
                 objectCount = 80;
                 objectLifeSpan[i] = 0;
-                transSList = [1, 1, 1];
                 break
             default:
                 sumPosition = transVList[i].reduce((a, b) => Math.abs(a) + Math.abs(b));
-                transSList = [1, 1, 1];
                 break;
         }
 
-        transVList[i] = objectWiseRendering(transVList[i], objectTimeAlive[i], rotVList[i], transSList, pipelineAddresses, renderingParams);
+        objectWiseRendering(transVList[i], objectTimeAlive[i], rotVList[i], pipelineAddresses, renderingParams);
 
         if (sumPosition < 1 || objectTimeAlive[i] > objectLifeSpan[i]){
             transVList.splice(i, 1);
