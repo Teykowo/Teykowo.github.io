@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Teyko's</title>
+  <link href="https://fonts.cdnfonts.com/css/common-pixel" rel="stylesheet">
   <link rel="stylesheet" href="Assets/style.css">
   <!-- ---------------------------------------------- JS Libraries Imports ---------------------------------------------- -->
   <!-- ------------------------------------------------------------------------------------------------------------------ -->
@@ -23,7 +24,6 @@
   <script src="Assets\Buffer_DATA\Cube.js" defer></script>
   <script src="Assets\RENDERING_PARAMS.js" defer></script>
   <!-- ------------------------------------------------------------------------------------------------------------------ -->
-  <script src="Assets\app.js" defer></script>
   <link rel="icon" type="image/png" href="Assets\img\thisIco.png">
 </head>
 <!-- ------------------------------------------------------------------------------------------------------------------ -->
@@ -39,17 +39,61 @@
     <canvas id="Background_Spawner"> 
     </canvas>
 </section>
+<script src="Assets\Javascript\backgroundCanvasRendering.js" defer></script>
 <!-- ------------------------------------------------------------------------------------------------------------------ -->
 
 <!-- ------------------------------------------------- Main Page Body ------------------------------------------------- -->
 <section id="Main_Body_Section">
-    <div id="Background_Cover"> </div>
-    <div id="Main_Body">
-        <div id="Title">  
-            <!-- <img>  -->
-            <h>Teyko's</h> 
-        </div> 
-        <!-- <div class="Body_Subsection"></div> -->
+    <div id="Background_Cover" class="animated"></div>
+    <div id="Main_Body" class="animated">
+        <div id="Header_Holder">
+            <div class="Cmd_Text animated">
+                </h>Shaders initialized.<h><br>
+                </h>Buffering complete.<h><br>
+                </h>Rendering in progress.<h><br>
+                </h>Welcome.<h><br>
+            </div>
+            <div id="Title" class="animated">  
+                <!-- <img>  -->
+                <h>8888888 8888888888 8 8888888888 `8.`8888.      ,8' 8 8888     ,88'  ,o888888o.       d888888o.   </h>
+                <h>      8 8888       8 8888        `8.`8888.    ,8'  8 8888    ,88'. 8888     `88.   .`8888:' `88. </h>
+                <h>      8 8888       8 8888         `8.`8888.  ,8'   8 8888   ,88',8 8888       `8b  8.`8888.   Y8 </h>
+                <h>      8 8888       8 8888          `8.`8888.,8'    8 8888  ,88' 88 8888        `8b `8.`8888.     </h>
+                <h>      8 8888       8 888888888888   `8.`88888'     8 8888 ,88'  88 8888         88  `8.`8888.    </h>
+                <h>      8 8888       8 8888            `8. 8888      8 8888 88'   88 8888         88   `8.`8888.   </h>
+                <h>      8 8888       8 8888             `8 8888      8 888888>    88 8888        ,8P    `8.`8888.  </h>
+                <h>      8 8888       8 8888              8 8888      8 8888 `Y8.  `8 8888       ,8P 8b   `8.`8888. </h>
+                <h>      8 8888       8 8888              8 8888      8 8888   `Y8. ` 8888     ,88'  `8b.  ;8.`8888 </h>
+                <h>      8 8888       8 888888888888      8 8888      8 8888     `Y8.  `8888888P'     `Y8888P ,88P' </h>
+            </div>
+        </div>
+        <div class="Cmd_Text animated">
+            <h>Greetings, and welcome to Teyko's TeykOS. Rendering resumes since </h><h class="Cmd_Text Corrupted_Text">[@Yc$]</h><h>.</h>
+            <br><br><br><br><br>
+
+            <h>G:\TeykOS> </h><h class="Input">Skills</h> 
+            <p>Loading proficiency data: ║███████████████║ 100%<br> Done ↓</p>
+            <h style="white-space: pre-wrap;">Software:   [Python, Rust, C++, OpenGL]</h><br>
+            <h style="white-space: pre-wrap;">Web:        [CSS3, HTML5, JavaScript]</h><br>
+            <h style="white-space: pre-wrap;">Tools:      [GitHub, VSCode, Microsoft Azure, Docker, Kubernetes]</h>
+            <br><br><br>
+
+            <h>G:\TeykOS> </h><h class="Input">Projects</h> 
+            <div>
+                <p></p>
+                <div>
+                    <img src="Assets/img/PCO_cube_bg.png">
+                    <canvas></canvas>
+                </div>
+            </div>
+            <div>
+                <p></p>
+                <div>
+                    <img src="Assets/img/hunter_cube_bg.png">
+                    <canvas></canvas>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
 <!-- ------------------------------------------------------------------------------------------------------------------ -->

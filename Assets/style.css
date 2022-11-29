@@ -5,13 +5,13 @@
 --fg_colour_pre: rgb(0, 0, 0);
 --fg_colour_post: rgb(15, 13, 13);
 --cube_colour: #ff2315;
---txt_colour: #BFB8AD;
+--txt_colour: #f3f3f2;
 --title_colour: #BFB8AD;
 --logo_colour: #510D0A;
 }
 /* ------------------------------------------------------------------------------------------------------ */
 body, html {
-    height: 100%;
+    height: 100vh;
     width: 100%;
     scroll-behavior: smooth;
     margin: 0;
@@ -28,6 +28,7 @@ section{
 
 video{
   object-fit: fill;
+  position: sticky;
 }
 
 video, #Background_Spawner{
@@ -106,20 +107,20 @@ input:checked + .Switch_Slider:before{
 }
 
 #Background_Cover{
-position: absolute;
-min-height: 100%;
-width: 100%;
-backdrop-filter: blur(2px);
-z-index: 0;
+  position: absolute;
+  min-height: 100%;
+  width: 100%;
+  backdrop-filter: blur(2px);
+  z-index: 0;
 
-animation: appear 1s 6.9s;
-animation-fill-mode: both;
+  animation: appear 1s 6.9s;
+  animation-fill-mode: both;
 }
 
 #Main_Body{
   display: flex;
-  flex-direction: row;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: flex-start;
   min-height: 100%;
   min-width: 400px;
   background-color: var(--fg_colour_pre);
@@ -127,6 +128,12 @@ animation-fill-mode: both;
   
   animation: shrink 1s 8s, appear 1s 6.9s;
   animation-fill-mode: both;
+}
+
+@media (orientation: portrait){
+  #Main_Body{
+    min-width: 100vw;
+  }
 }
 
 @keyframes appear{
@@ -146,8 +153,94 @@ animation-fill-mode: both;
     width: 70vw;
   }
 }
-/* ------------------------------------------------------------------------------------------------------ */
 
-/* ------------------------------------------- Title and Logo ------------------------------------------- */
+/* ----------------------------------- self appearing text ----------------------------------- */
+#Header_Holder{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
 
+@media (orientation: portrait){
+  #Header_Holder{
+    flex-direction: column-reverse;
+  }
+}
+
+#Header_Holder > .Cmd_Text{
+  animation: typing linear 1s 9s backwards;
+  white-space: nowrap;
+}
+
+.Cmd_Text{
+  color: var(--txt_colour);
+  font-family: monospace;
+  overflow: hidden;
+  margin: 2em 1rem 0 1rem;
+  letter-spacing: .15em;
+  animation: typingSmall linear 1s 9s backwards;
+  font-size: 1rem;
+  width: fit-content;
+}
+
+@keyframes typing {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 50%;
+  }
+}
+
+@keyframes typingSmall {
+  0% {
+    width: 0;
+    white-space: nowrap;
+  }
+  100% {
+    width: 100%;
+    white-space: wrap;
+  }
+}
+
+.Corrupted_Text{
+  font-family: 'Common Pixel', sans-serif;
+  margin: 2em 0 0 0;
+  color: transparent;
+  background: linear-gradient(to left, #3d2f2f, #502c2c);
+  -webkit-background-clip: text;
+}
+
+#Title{
+  justify-self: end;
+  color: var(--txt_colour);
+  font-family: monospace;
+  font-size: 0.5rem;
+  margin: 1em 1rem 0 0;
+  max-width: fit-content;
+  white-space: pre;
+  margin-left: -4rem;
+  animation: appear 2s 9s both;
+}
+
+@media (orientation: landscape){
+  @media (max-width: 1010px){
+    #Title{
+      display: none;
+    }
+  }
+}
+
+@media (max-width: 480px){
+  #Title{
+    display: none;
+  }
+  #Header_Holder > .Cmd_Text{
+    animation: typingSmall linear 1s 9s both !important;
+  }
+}
+
+.Input{
+  font-family: 'Common Pixel', sans-serif;
+}
 /* ------------------------------------------------------------------------------------------------------ */
