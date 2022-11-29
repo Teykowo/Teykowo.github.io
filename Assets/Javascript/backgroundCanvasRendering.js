@@ -33,7 +33,9 @@ function main(){
     const glContext = canvas.getContext('webgl');
     // Add a variable to the window element and set it's value to the glContext, that way it can be accessed in event listeners.
     window.linkedContext = glContext;
-
+    // Get the parameters defined in the parameter file.
+    const renderingParams = RENDERING_PARAMS();
+    
     // We have to take into account the possibility of an error when fetching the webGL context. send an alert if the gl variable is null.
     if (!glContext) {
         // Reasons for an error would most probably be due to it being unsuported by the current browser, the error should warn about this.
@@ -86,6 +88,8 @@ function main(){
         "ModelxViewMatrixAddress": glContext.getUniformLocation(shaderPipeline, 'uModelxViewMatrix'),
         "ProjectionMatrixAddress": glContext.getUniformLocation(shaderPipeline, 'uProjectionMatrix'),
     };
+    // Tell the context to use this pipeline.
+    glContext.useProgram(pipelineAddresses.pipelineAddress);
     // ------------------------------------------------------------------------------------------
 
     // ------------------------------------ -Data Generation ------------------------------------
@@ -105,6 +109,35 @@ function main(){
     colourBuffer = buffering(glContext, vertexColoursData, "ARRAY_BUFFER", "Float32Array");
     meshVertexIndicesBuffer = buffering(glContext, triangleMeshVertexIndices, "ELEMENT_ARRAY_BUFFER", "Uint16Array")
     bufferLibrary = {"vertexBuffer": vertexBuffer, "colourBuffer": colourBuffer, "meshVertexIndicesBuffer": meshVertexIndicesBuffer};
+
+    // ------------------------------------- Buffer reading -------------------------------------
+    // Tell the context how the vertex shader should read from the vertex buffer.
+    {
+        glContext.bindBuffer(glContext.ARRAY_BUFFER, bufferLibrary.vertexBuffer);
+        glContext.vertexAttribPointer(pipelineAddresses.vertexPositionAddress, 
+                                      renderingParams.vv.vv_valuesPerIter, 
+                                      renderingParams.vv.vv_bufferDataType, 
+                                      renderingParams.vv.vv_normalize, 
+                                      renderingParams.vv.vv_stride, 
+                                      renderingParams.vv.vv_offset);
+        // Attributes need to be enabled to work.
+        glContext.enableVertexAttribArray(pipelineAddresses.vertexPositionAddress);
+        }
+        // Tell the context how the vertex shaders should read from the colour buffer.
+        {
+        glContext.bindBuffer(glContext.ARRAY_BUFFER, bufferLibrary.colourBuffer);
+        glContext.vertexAttribPointer(pipelineAddresses.vertexColourAddress, 
+                                      renderingParams.vc.vc_valuesPerIter, 
+                                      renderingParams.vc.vc_bufferDataType, 
+                                      renderingParams.vc.vc_normalize, 
+                                      renderingParams.vc.vc_stride, 
+                                      renderingParams.vc.vc_offset);
+        // Attributes need to be enabled to work.
+        glContext.enableVertexAttribArray(pipelineAddresses.vertexColourAddress);
+        }
+        // Bind the element buffer that will be read in the drawElements function to render triangles based on vertex indices.
+        glContext.bindBuffer(glContext.ELEMENT_ARRAY_BUFFER, bufferLibrary.meshVertexIndicesBuffer);
+        // ------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------
 
     // ---------------------------------------- -Options ----------------------------------------
@@ -119,6 +152,7 @@ function main(){
     // ------------------------------------------------------------------------------------------
 
     // ------------------------------------ -Event Listeners ------------------------------------
+    let animatedElements = document.querySelectorAll('.animated');
     window.addEventListener('resize', resizeCanvas);
     skipIntro();
     introSkipSwitch.addEventListener('change', skipIntro);
@@ -129,11 +163,10 @@ function main(){
                 animationDelay = oldTime;
                 animationEnd = true;
 
-                mainBody.style.animationDelay = '0s, 0s'
-                mainBody.style.animationDuration = '0s, 0s'
-                
-                backgroundCover.style.animationDelay = '0s'
-                backgroundCover.style.animationDuration = '0s'
+                animatedElements.forEach((element) => {
+                    element.style.animationDelay = '0s, 0s'
+                    element.style.animationDuration = '0s, 0s'
+                });
             }
         }else{
             localStorage.setItem("introSkipStoredValue", introSkipSwitch.checked);
@@ -142,10 +175,7 @@ function main(){
     // ------------------------------------------------------------------------------------------
 
     // ------------------------------------- Rendering Loop -------------------------------------
-    // Get the parameters defined in the parameter file.
-    const renderingParams = RENDERING_PARAMS();
     // Render the scene repeatedly using a recurcive function.
-
     function renderingLoop(timeSinceStart) {
         // timeSinceStart is first gathered using requestAnimationFrame wich gave us the time in ms since the document's time origin.
         // Multiplying this value changes the speed of animation transformations, meaning the next frame will have the figure move more or less.
@@ -188,38 +218,6 @@ function draw(glContext, pipelineAddresses, buffers, deltaTime, timeSinceStart, 
                      renderingParams.projection.projec_zNear, 
                      renderingParams.projection.projec_zFar);
     // ------------------------------------------------------------------------------------------
-
-    // ------------------------------------- Buffer reading -------------------------------------
-    // Tell the context how the vertex shader should read from the vertex buffer.
-    {
-    glContext.bindBuffer(glContext.ARRAY_BUFFER, buffers.vertexBuffer);
-    glContext.vertexAttribPointer(pipelineAddresses.vertexPositionAddress, 
-                                  renderingParams.vv.vv_valuesPerIter, 
-                                  renderingParams.vv.vv_bufferDataType, 
-                                  renderingParams.vv.vv_normalize, 
-                                  renderingParams.vv.vv_stride, 
-                                  renderingParams.vv.vv_offset);
-    // Attributes need to be enabled to work.
-    glContext.enableVertexAttribArray(pipelineAddresses.vertexPositionAddress);
-    }
-    // Tell the context how the vertex shaders should read from the colour buffer.
-    {
-    glContext.bindBuffer(glContext.ARRAY_BUFFER, buffers.colourBuffer);
-    glContext.vertexAttribPointer(pipelineAddresses.vertexColourAddress, 
-                                  renderingParams.vc.vc_valuesPerIter, 
-                                  renderingParams.vc.vc_bufferDataType, 
-                                  renderingParams.vc.vc_normalize, 
-                                  renderingParams.vc.vc_stride, 
-                                  renderingParams.vc.vc_offset);
-    // Attributes need to be enabled to work.
-    glContext.enableVertexAttribArray(pipelineAddresses.vertexColourAddress);
-    }
-    // Bind the element buffer that will be read in the drawElements function to render triangles based on vertex indices.
-    glContext.bindBuffer(glContext.ELEMENT_ARRAY_BUFFER, buffers.meshVertexIndicesBuffer);
-    // ------------------------------------------------------------------------------------------
-
-    // Specified which pipeline the context should use.
-    glContext.useProgram(pipelineAddresses.pipelineAddress);
 
     // Set the shader projection uniforms, since it's used for all objects.
     glContext.uniformMatrix4fv(pipelineAddresses.ProjectionMatrixAddress, false, projectionMatrix);
