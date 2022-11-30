@@ -26,120 +26,15 @@ main();
 // ------------------------------------------------- -Main Function -------------------------------------------------
 // We now define the main function which is called when the script is read.
 function main(){
-    // We get the canvas element from our html, it's used to draw on using webGL.
-    const canvas = document.querySelector('#Background_Spawner');
-    // Canvas element have a webGL context, the same as the one we have to create when programming with openGL. We have to get this context to use the canvas as GL contexts
-    // hold all the fonction used to comunicate with the GPU.
-    const glContext = canvas.getContext('webgl');
-    // Add a variable to the window element and set it's value to the glContext, that way it can be accessed in event listeners.
-    window.linkedContext = glContext;
-    // Get the parameters defined in the parameter file.
-    const renderingParams = RENDERING_PARAMS();
-    
-    // We have to take into account the possibility of an error when fetching the webGL context. send an alert if the gl variable is null.
-    if (!glContext) {
-        // Reasons for an error would most probably be due to it being unsuported by the current browser, the error should warn about this.
-        alert('Unable to load webGL context for graphics. It might be that your browser or hardware does not support this feature.');
-        // Return now, aborting the rest of the procedure and saving what we can of the website.
-        return;
-    }
-    
-    // Resize the canvas to fit in the screen's resolution.
-    resizeCanvas();
-    // Define the colour that will be used when erasing. Luminosity is defined as ''how close to 1'', hence 
-    const value = 1 // V value of HSV
-    glContext.clearColor(235/255*value, 236/255*value, 237/255*value, 1);
+    canvas = new Canvas('#Background_Spawner')
+    canvas.setup(235/255, 236/255, 237/255, 1, 1, 'cube()')
+    // canvas.setup(15/41, 13/41, 13/41, 1, 1, 'cube()')
     // glContext.clearColor(1/14*value, 0, 13/14*value, 1);
-    // Ensure that the clear depth is set to its default value of 1 (clear everything).
-    glContext.clearDepth(1);
-    // Enable depth tests for rendering fragments in front of others, given their depth values.
-    glContext.enable(glContext.DEPTH_TEST);
-    // Depth function is defined to LEQUAL (less or equal depth value will pass in front) to avoid z-fighting.
-    glContext.depthFunc(glContext.LEQUAL);
-    // Only render what is visible, the obstructed vertices will be culled and thus the triangles that depend on them too.
-    glContext.enable(glContext.CULL_FACE);
-    glContext.cullFace(glContext.BACK);
-
-    // ---------------------------------- Shaders Source Codes ----------------------------------
-    // To generate graphics we need shaders. Write the source code of each shader, vertex shaders take care of the vertices and generating the texel, 
-    // while the fragment Shaders colour the pixels.
-    // webGL uses special variable qualifiers for shader functions (variable names start with their qualifier's first letter for clarity), here are their definitions:
-    // const – The declaration is of a compile time constant.
-    // attribute – Global variables that may change per vertex, that are passed from the OpenGL application to vertex shaders. 
-    // This qualifier can only be used in vertex shaders. For the shader this is a read-only variable. See Attribute section.
-    // uniform – Global variables that may change per primitive [...], that are passed from the OpenGL application to the shaders. 
-    // This qualifier can be used in both vertex and fragment shaders. For the shaders this is a read-only variable. See Uniform section.
-    // varying – used for interpolated data between a vertex shader and a fragment shader. Available for writing in the vertex shader, 
-    // and read-only in a fragment shader. See Varying section.
-    const vertexShaderSourceCode = vertexShaderSource();
-    const fragmentShaderSourceCode = fragmentShaderSource();
-    // ------------------------------------------------------------------------------------------
-
-    // ------------------------------- Shaders Variable Addresses -------------------------------
-    // Create a shader pipeline using our custom functions.
-    const shaderPipeline = initShadersPipeline(glContext, vertexShaderSourceCode, fragmentShaderSourceCode)
-
-    // WebGL assigns specific memory locations for shaders buffers, which are used for shaders to read and get their inputs from.
-    // The doc motivates storing them together in a dictionary. 
-    const pipelineAddresses = {
-        "pipelineAddress": shaderPipeline,
-        "vertexPositionAddress": glContext.getAttribLocation(shaderPipeline, 'aVertexPosition'),
-        "vertexColourAddress": glContext.getAttribLocation(shaderPipeline, 'aVertexColour'),
-        "ModelxViewMatrixAddress": glContext.getUniformLocation(shaderPipeline, 'uModelxViewMatrix'),
-        "ProjectionMatrixAddress": glContext.getUniformLocation(shaderPipeline, 'uProjectionMatrix'),
-    };
-    // Tell the context to use this pipeline.
-    glContext.useProgram(pipelineAddresses.pipelineAddress);
-    // ------------------------------------------------------------------------------------------
-
-    // ------------------------------------ -Data Generation ------------------------------------
-    // For now we write in hard each vertex and their colours, we should be able to load .obj files.
-    var cubeObj = cube();
-    // Vertex coordinates.
-    const vertexData = cubeObj[0];
-    // The colour matrix has one column for each value in the RGBA format
-    const vertexColoursData = cubeObj[1];
-    // This array defines the triangles of the object's mesh using the indices pointing to specific vertices in the vertex array.
-    const triangleMeshVertexIndices = cubeObj[2];
-    // ------------------------------------------------------------------------------------------
-
-    // -------------------------------- Buffering Generated Data --------------------------------
-    // Generate a buffer and feed it the data so that we can render it.
-    vertexBuffer = buffering(glContext, vertexData, "ARRAY_BUFFER", "Float32Array");
-    colourBuffer = buffering(glContext, vertexColoursData, "ARRAY_BUFFER", "Float32Array");
-    meshVertexIndicesBuffer = buffering(glContext, triangleMeshVertexIndices, "ELEMENT_ARRAY_BUFFER", "Uint16Array")
-    bufferLibrary = {"vertexBuffer": vertexBuffer, "colourBuffer": colourBuffer, "meshVertexIndicesBuffer": meshVertexIndicesBuffer};
-
-    // ------------------------------------- Buffer reading -------------------------------------
-    // Tell the context how the vertex shader should read from the vertex buffer.
-    {
-        glContext.bindBuffer(glContext.ARRAY_BUFFER, bufferLibrary.vertexBuffer);
-        glContext.vertexAttribPointer(pipelineAddresses.vertexPositionAddress, 
-                                      renderingParams.vv.vv_valuesPerIter, 
-                                      renderingParams.vv.vv_bufferDataType, 
-                                      renderingParams.vv.vv_normalize, 
-                                      renderingParams.vv.vv_stride, 
-                                      renderingParams.vv.vv_offset);
-        // Attributes need to be enabled to work.
-        glContext.enableVertexAttribArray(pipelineAddresses.vertexPositionAddress);
-        }
-        // Tell the context how the vertex shaders should read from the colour buffer.
-        {
-        glContext.bindBuffer(glContext.ARRAY_BUFFER, bufferLibrary.colourBuffer);
-        glContext.vertexAttribPointer(pipelineAddresses.vertexColourAddress, 
-                                      renderingParams.vc.vc_valuesPerIter, 
-                                      renderingParams.vc.vc_bufferDataType, 
-                                      renderingParams.vc.vc_normalize, 
-                                      renderingParams.vc.vc_stride, 
-                                      renderingParams.vc.vc_offset);
-        // Attributes need to be enabled to work.
-        glContext.enableVertexAttribArray(pipelineAddresses.vertexColourAddress);
-        }
-        // Bind the element buffer that will be read in the drawElements function to render triangles based on vertex indices.
-        glContext.bindBuffer(glContext.ELEMENT_ARRAY_BUFFER, bufferLibrary.meshVertexIndicesBuffer);
-        // ------------------------------------------------------------------------------------------
-    // ------------------------------------------------------------------------------------------
-
+    const glContext = canvas.glContext;
+    const pipelineAddresses = canvas.pipelineAddresses
+    const bufferLibrary = canvas.bufferLibrary
+    const renderingParams = canvas.renderingParams
+    
     // ---------------------------------------- -Options ----------------------------------------
     var introSkipSwitch = document.getElementById('IntroSkipValue');
 
@@ -153,7 +48,7 @@ function main(){
 
     // ------------------------------------ -Event Listeners ------------------------------------
     let animatedElements = document.querySelectorAll('.animated');
-    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('resize', canvas.resizeCanvas);
     skipIntro();
     introSkipSwitch.addEventListener('change', skipIntro);
     function skipIntro() {
@@ -187,7 +82,7 @@ function main(){
         oldTime = timeSinceStart;
 
         // Call the draw function.
-        draw(glContext, pipelineAddresses, bufferLibrary, deltaTime, timeSinceStart, renderingParams);
+        draw(canvas, glContext, pipelineAddresses, deltaTime, timeSinceStart, renderingParams);
     
         // Make the function call recursive by recalling the renderingLoop function through requestAnimationFrame.
         requestAnimationFrame(renderingLoop);
@@ -202,7 +97,7 @@ function main(){
 
 
 // ------------------------------------------------ Scenes rendering ------------------------------------------------
-function draw(glContext, pipelineAddresses, buffers, deltaTime, timeSinceStart, renderingParams){
+function draw(canvas, glContext, pipelineAddresses, deltaTime, timeSinceStart, renderingParams){
     // -------------------- The perspective matrix is shared for all objects --------------------
     // Always start with cleaning the canvas.
     glContext.clear(glContext.COLOR_BUFFER_BIT|glContext.DEPTH_BUFFER_BIT);
@@ -270,7 +165,7 @@ function draw(glContext, pipelineAddresses, buffers, deltaTime, timeSinceStart, 
                 break;
         }
 
-        objectWiseRendering(transVList[i], objectTimeAlive[i], rotVList[i], pipelineAddresses, renderingParams);
+        canvas.objectWiseRendering(transVList[i], objectTimeAlive[i], rotVList[i]);
 
         if (sumPosition < 1 || objectTimeAlive[i] > objectLifeSpan[i]){
             transVList.splice(i, 1);
