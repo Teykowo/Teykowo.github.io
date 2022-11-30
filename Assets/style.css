@@ -154,7 +154,7 @@ input:checked + .Switch_Slider:before{
   }
 }
 
-/* ----------------------------------- self appearing text ----------------------------------- */
+/* -------------------------------- self appearing texts -------------------------------- */
 #Header_Holder{
   display: flex;
   flex-direction: row;
@@ -242,5 +242,20 @@ input:checked + .Switch_Slider:before{
 
 .Input{
   font-family: 'Common Pixel', sans-serif;
+}
+/* ----------------------------------- Projects block ----------------------------------- */
+.Projects_Holder{
+  animation: appear 1s 9s;
+  width: 131px;
+  height: 131px;
+}
+.Projects_Holder > img{
+  z-index: 2;
+}
+.Projects_Holder > canvas{
+  position: relative;
+  top: -136px;
+  left: 0;
+  z-index: 3;
 }
 /* ------------------------------------------------------------------------------------------------------ */

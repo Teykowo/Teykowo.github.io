@@ -25,6 +25,17 @@ class Canvas {
         this.glContext.cullFace(this.glContext.BACK);
 
         // Var setup.
+        // Defined how many objects (including the main one at the start for the animation) we want in our canvas.
+        this.objectCount = 6
+        // Hold the translation vectors of each elements.
+        this.transVList = [];
+        // Hold the rotation vectors of each elements.
+        this.rotVList = [];
+        // Hold the life spanned by each object.
+        this.objectTimeAlive = [0.0];
+        // Hold the maximum life span of the object.
+        this.objectLifeSpan = [animationDelay];
+
         this.rotationSpeed = 10;
         this.pipelineAddresses = null;
         this.bufferLibrary = null;
@@ -32,11 +43,11 @@ class Canvas {
 
     setup(R,G,B,A,V, ObjectLoader, width = this.glContext.canvas.clientWidth, height = this.glContext.canvas.clientHeight) {
         // Define the colour that will be used when erasing. Luminosity is defined as ''how close to 1''.
-        this.setClearColour(R,G,B,A,V);
+        this.setClearColour(R, G, B, A, V);
         this.SetShaders();
         this.setObject(ObjectLoader);
         // Resize the canvas to fit in the screen's resolution.
-        this.resizeCanvas(width,height);
+        this.resizeCanvas(width, height);
     }
 
     setClearColour(R, G, B, A, V){
@@ -186,14 +197,14 @@ class Canvas {
         return bufferObject;
     }
 
-    objectWiseRendering(translationVector, objectTimeAlive, rotationVector){
+    objectWiseRendering(i, deltaTime){
         // For now we will draw in the center of the canvas, which means a simple identity matrix for the modelxview matrix.
         const modelxViewMatrix = mat4.create();
     
         // We need to move the object to where it's rendered depth-wise. As for all the mat4 functions, the first argument is the receiving matrix.
-        mat4.translate(modelxViewMatrix, modelxViewMatrix, translationVector);
+        mat4.translate(modelxViewMatrix, modelxViewMatrix, this.transVList[i]);
         // We animate our shape with these self explanatory functions. Here rotation increses the objects angle by how much time has passed.
-        mat4.rotate(modelxViewMatrix, modelxViewMatrix, objectTimeAlive/this.rotationSpeed, rotationVector);
+        mat4.rotate(modelxViewMatrix, modelxViewMatrix, this.objectTimeAlive[i]/this.rotationSpeed, this.rotVList[i]);
     
         // Set the shader ModelxView uniforms, since it depends on the object's.
         this.glContext.uniformMatrix4fv(this.pipelineAddresses.ModelxViewMatrixAddress, false, modelxViewMatrix);
@@ -206,5 +217,7 @@ class Canvas {
                                     this.renderingParams.draw.draw_type, 
                                     this.renderingParams.draw.draw_offset);
         }
+
+        this.objectTimeAlive[i] += deltaTime;
     }
 }

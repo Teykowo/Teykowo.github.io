@@ -16,10 +16,12 @@
   <script src=https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.3.0/math.min.js defer></script>
   <script src="Assets\Javascript\CanvasObject.js" defer></script>
   <script src="Assets\Javascript\randInterval.js" defer></script>
+  <script src="Assets\Javascript\drawBackground.js" defer></script>
   <script src="Assets\Shaders\fragmentShaderSource.js" defer></script>
   <script src="Assets\Shaders\vertexShaderSource.js" defer></script>
   <script src="Assets\Buffer_DATA\Cube.js" defer></script>
   <script src="Assets\RENDERING_PARAMS.js" defer></script>
+  <script src="Assets\app.js" defer></script>
   <!-- ------------------------------------------------------------------------------------------------------------------ -->
   <link rel="icon" type="image/png" href="Assets\img\thisIco.png">
 </head>
@@ -36,7 +38,6 @@
     <canvas id="Background_Spawner"> 
     </canvas>
 </section>
-<script src="Assets\Javascript\backgroundCanvasRendering.js" defer></script>
 <!-- ------------------------------------------------------------------------------------------------------------------ -->
 
 <!-- ------------------------------------------------- Main Page Body ------------------------------------------------- -->
@@ -70,24 +71,24 @@
 
             <h>G:\TeykOS> </h><h class="Input">Skills</h> 
             <p>Loading proficiency data: ║███████████████║ 100%<br> Done ↓</p>
-            <h style="white-space: pre-wrap;">Software:   [Python, Rust, C++, OpenGL]</h><br>
-            <h style="white-space: pre-wrap;">Web:        [CSS3, HTML5, JavaScript]</h><br>
-            <h style="white-space: pre-wrap;">Tools:      [GitHub, VSCode, Microsoft Azure, Docker, Kubernetes]</h>
+            <h style="white-space: pre-wrap;">Software:      [Python, Rust, C++, OpenGL]</h><br>
+            <h style="white-space: pre-wrap;">Web:           [CSS3, HTML5, JavaScript]</h><br>
+            <h style="white-space: pre-wrap;">Technologies:  [GitHub, VSCode, Microsoft Azure, Docker, Kubernetes]</h>
             <br><br><br>
 
             <h>G:\TeykOS> </h><h class="Input">Projects</h> 
             <div>
                 <p></p>
-                <div>
+                <div class="Projects_Holder animated">
                     <img src="Assets/img/PCO_cube_bg.png">
-                    <canvas></canvas>
+                    <canvas id="PCO_Cube"></canvas>
                 </div>
             </div>
             <div>
                 <p></p>
-                <div>
+                <div class="Projects_Holder animated">
                     <img src="Assets/img/hunter_cube_bg.png">
-                    <canvas></canvas>
+                    <canvas id="Hunter_Cube"></canvas>
                 </div>
             </div>
         </div>
