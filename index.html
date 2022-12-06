@@ -26,17 +26,18 @@
   <link rel="icon" type="image/png" href="Assets\img\thisIco.png">
 </head>
 <!-- ------------------------------------------------------------------------------------------------------------------ -->
+
 <!-- ------------------------------------------------- Option Buttons ------------------------------------------------- -->
 <label id="IntroSkipSwitch">
     <input id="IntroSkipValue" type="checkbox">
     <span class="Switch_Slider"></span>
 </label>
 <!-- ------------------------------------------------------------------------------------------------------------------ -->
+
 <!-- ------------------------------------------------ WebGL Cube Space ------------------------------------------------ -->
 <section id="Floating_Cube_Space_Section">
     <video autoplay muted loop><source src="https://giant.gfycat.com/SparseAbandonedIndusriverdolphin.mp4", type="video/mp4"></video>
-    <canvas id="Background_Spawner"> 
-    </canvas>
+    <canvas id="Background_Spawner"></canvas>
 </section>
 <!-- ------------------------------------------------------------------------------------------------------------------ -->
 
@@ -68,28 +69,43 @@
         <div class="Cmd_Text animated">
             <h>Greetings, and welcome to Teyko's TeykOS. Rendering resumes since </h><h class="Cmd_Text Corrupted_Text">[@Yc$]</h><h>.</h>
             <br><br><br><br><br>
+        </div>
 
+
+        
+        <div class="REPL_Input Cmd_Text animated">
             <h>G:\TeykOS> </h><h class="Input">Skills</h> 
+        </div>
+
+        <div id="Skills_Block" class="Cmd_Text animated">
             <p>Loading proficiency data: ║███████████████║ 100%<br> Done ↓</p>
             <h style="white-space: pre-wrap;">Software:      [Python, Rust, C++, OpenGL]</h><br>
             <h style="white-space: pre-wrap;">Web:           [CSS3, HTML5, JavaScript]</h><br>
             <h style="white-space: pre-wrap;">Technologies:  [GitHub, VSCode, Microsoft Azure, Docker, Kubernetes]</h>
             <br><br><br>
+        </div>
 
+
+        <div class="REPL_Input Cmd_Text animated">
             <h>G:\TeykOS> </h><h class="Input">Projects</h> 
-            <div>
-                <p></p>
+        </div>
+
+        <div id="Projects_Block" class="Cmd_Text animated">
+            <div class="Projects_Subblock Right_Aligned_Text">
+                <p class="Projects_Texts">During my apprenticeship at Groupama©, I undertook the creation of a pedestrian counter using camera-based, 
+                                        IA-assisted image recognition and processing.</p>
                 <div class="Projects_Holder animated">
                     <img src="Assets/img/PCO_cube_bg.png">
                     <canvas id="PCO_Cube"></canvas>
                 </div>
             </div>
-            <div>
-                <p></p>
+            <div class="Projects_Subblock">
                 <div class="Projects_Holder animated">
                     <img src="Assets/img/hunter_cube_bg.png">
                     <canvas id="Hunter_Cube"></canvas>
                 </div>
+                <p class="Projects_Texts">Touched by the devestating effects of invasive species on local bio-diversity, 
+                                        I developped a Unity environment in which I trained a robot to look for, target, and eliminate a lionfish.</p>
             </div>
         </div>
     </div>

@@ -8,8 +8,6 @@ var animationDelay = parseFloat(getComputedStyle(mainBody).animationDelay.slice(
 var skipIntroFloat = 0;
 // Init a value to take the time each loop.
 var oldTime = 0;
-// Define whether to end the animation or not.
-var animationEnd = false;
 // ------------------------------------------------------------------------------------------
 
 // Javascript doesn't read from top to bottom like python does, so we can make the function call now and define it later.
@@ -29,15 +27,15 @@ function main(){
     canvasBackground.objectLifeSpan.push(animationDelay);
 
     canvasPCO = new Canvas('#PCO_Cube')
-    canvasPCO.setup(15/41, 13/41, 13/41, 1, 1, 'cube()', 131, 131);
-    canvasPCO.transVList.push([0.0, 0.0, -1.0]);
+    canvasPCO.setup(1, 1, 1, 1, 0, 'cube()', 131, 131);
+    canvasPCO.transVList.push([0.0, 0.0, -4.5]);
     canvasPCO.rotVList.push([0.2, 0.4, 0.3]);
     canvasPCO.objectTimeAlive.push(0.0);
 
     canvasHunter = new Canvas('#Hunter_Cube')
-    canvasHunter.setup(15/41, 13/41, 13/41, 1, 1, 'cube()', 131, 131);
-    canvasHunter.transVList.push([0.0, 0.0, -1.0]);
-    canvasHunter.rotVList.push([0.2, 0.4, 0.3]);
+    canvasHunter.setup(1, 1, 1, 1, 0, 'cube()', 131, 131);
+    canvasHunter.transVList.push([0.0, 0.0, -4.5]);
+    canvasHunter.rotVList.push([-0.4, 0.2, 0.2]);
     canvasHunter.objectTimeAlive.push(0.0);
     // ------------------------------------------------------------------------------------------
     
@@ -53,7 +51,9 @@ function main(){
 
     // ------------------------------------ -Event Listeners ------------------------------------
     let animatedElements = document.querySelectorAll('.animated');
-    window.addEventListener('resize', function() {canvasBackground.resizeCanvas()});
+    window.addEventListener('resize', function() {canvasBackground.resizeCanvas(); 
+                                                  canvasPCO.resizeCanvas(131, 131); 
+                                                  canvasHunter.resizeCanvas(131, 131);});
     skipIntro();
     introSkipSwitch.addEventListener('change', skipIntro);
     function skipIntro() {
@@ -61,7 +61,9 @@ function main(){
             localStorage.setItem("introSkipStoredValue", introSkipSwitch.checked);
             if (animationDelay > oldTime){
                 animationDelay = oldTime;
-                animationEnd = true;
+                canvasBackground.animationEnd = true;
+                canvasPCO.animationEnd = true;
+                canvasHunter.animationEnd = true;
 
                 animatedElements.forEach((element) => {
                     element.style.animationDelay = '0s, 0s'
@@ -77,6 +79,12 @@ function main(){
     // ------------------------------------- Rendering Loop -------------------------------------
     // Render the scene repeatedly using a recurcive function.
     function renderingLoop(timeSinceStart) {
+        
+        // Always start with cleaning the canvases.
+        canvasBackground.glContext.clear(canvasBackground.glContext.COLOR_BUFFER_BIT|canvasBackground.glContext.DEPTH_BUFFER_BIT);
+        canvasHunter.glContext.clear(canvasHunter.glContext.COLOR_BUFFER_BIT|canvasHunter.glContext.DEPTH_BUFFER_BIT);
+        canvasPCO.glContext.clear(canvasPCO.glContext.COLOR_BUFFER_BIT|canvasPCO.glContext.DEPTH_BUFFER_BIT);
+
         // timeSinceStart is first gathered using requestAnimationFrame wich gave us the time in ms since the document's time origin.
         // Multiplying this value changes the speed of animation transformations, meaning the next frame will have the figure move more or less.
         timeSinceStart *= 0.001; // From ms to s.

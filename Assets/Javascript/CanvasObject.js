@@ -35,10 +35,13 @@ class Canvas {
         this.objectTimeAlive = [0.0];
         // Hold the maximum life span of the object.
         this.objectLifeSpan = [animationDelay];
+        // Define whether to end the animation or not.
+        this.animationEnd = false;
 
         this.rotationSpeed = 10;
-        this.pipelineAddresses = null;
-        this.bufferLibrary = null;
+        this.pipelineAddresses;
+        this.bufferLibrary;
+        this.projectionMatrix
     }  
 
     setup(R,G,B,A,V, ObjectLoader, width = this.glContext.canvas.clientWidth, height = this.glContext.canvas.clientHeight) {
@@ -48,11 +51,30 @@ class Canvas {
         this.setObject(ObjectLoader);
         // Resize the canvas to fit in the screen's resolution.
         this.resizeCanvas(width, height);
+        this.setPerspectiveMatrix();
     }
 
     setClearColour(R, G, B, A, V){
         // V value of HSV
         this.glContext.clearColor(R*V, G*V, B*V, A);
+    }
+
+    setPerspectiveMatrix() {
+        // -------------------- The perspective matrix is shared for all objects --------------------
+        // Create the projection matrix for the vertex shader.
+        this.projectionMatrix = mat4.create();
+        // Get the aspect ratio of the current screen.
+        const aspectRatio = this.glContext.canvas.clientWidth / this.glContext.canvas.clientHeight;
+        // glMatrix has a designated function for make perspective transformation matrices efficiently, it will be applied to the matrix given as first argument.
+        mat4.perspective(this.projectionMatrix, 
+                        this.renderingParams.projection.projec_fov, 
+                        aspectRatio, 
+                        this.renderingParams.projection.projec_zNear, 
+                        this.renderingParams.projection.projec_zFar);
+
+        // Set the shader projection uniforms, since it's used for all objects.
+        this.glContext.uniformMatrix4fv(this.pipelineAddresses.ProjectionMatrixAddress, false, this.projectionMatrix);
+        // ------------------------------------------------------------------------------------------
     }
 
     SetShaders() {
@@ -86,7 +108,8 @@ class Canvas {
         this.glContext.useProgram(this.pipelineAddresses.pipelineAddress);
     }
 
-    resizeCanvas(width = this.glContext.canvas.clientWidth, height = this.glContext.canvas.clientHeight){
+    resizeCanvas(width = window.innerWidth, height = window.innerHeight){
+        console.log(width, height)
         devicePixelRatio = window.devicePixelRatio;
     
         this.glContext.canvas.width = (width * devicePixelRatio);
