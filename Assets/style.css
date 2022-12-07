@@ -11,24 +11,33 @@
 }
 /* ------------------------------------------------------------------------------------------------------ */
 body, html {
-    height: 100vh;
-    width: 100%;
-    scroll-behavior: smooth;
-    margin: 0;
-    overflow-x: hidden;
+  height: 100vh;
+  width: 100%;
+  scroll-behavior: smooth;
+  margin: 0;
+  overflow-x: hidden;
+  background-color: var(--bg_colour);
+  animation: lockScreen 1s 8s both;
+}
+
+@keyframes lockScreen{
+  0% {
     overflow-y: hidden;
-    background-color: var(--bg_colour);
   }
+  100%{
+    overflow-y: unset;
+  }
+}
 /* ------------------------------------------ WebGL Cube Space ------------------------------------------ */
 section{
   position: absolute;
-  height: 100%;
+  min-height: 100%;
+  height: auto;
   width: 100%;
 }
 
 video{
   object-fit: fill;
-  position: sticky;
 }
 
 video, #Background_Spawner{
@@ -47,7 +56,7 @@ video, #Background_Spawner{
   width: 60px;
   height: 34px;
   left: 2px;
-  bottom: 2px;
+  top: 2px;
   z-index: 2;
 }
 
@@ -154,11 +163,20 @@ input:checked + .Switch_Slider:before{
   }
 }
 
-/* ----------------------------------- self appearing text ----------------------------------- */
+#Skills_Block{
+  height: max-content;
+}
+
+#Projects_Block{
+  height: max-content;
+}
+
+/* -------------------------------- self appearing texts -------------------------------- */
 #Header_Holder{
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  margin-top: 34px;
 }
 
 @media (orientation: portrait){
@@ -181,6 +199,11 @@ input:checked + .Switch_Slider:before{
   animation: typingSmall linear 1s 9s backwards;
   font-size: 1rem;
   width: fit-content;
+}
+
+.REPL_Input{
+  margin-top: 0;
+  height: 1.5em;
 }
 
 @keyframes typing {
@@ -208,6 +231,7 @@ input:checked + .Switch_Slider:before{
   margin: 2em 0 0 0;
   color: transparent;
   background: linear-gradient(to left, #3d2f2f, #502c2c);
+  background-clip: text;
   -webkit-background-clip: text;
 }
 
@@ -236,11 +260,64 @@ input:checked + .Switch_Slider:before{
     display: none;
   }
   #Header_Holder > .Cmd_Text{
-    animation: typingSmall linear 1s 9s both !important;
+    animation: typingSmall linear 1s 9s both;
   }
 }
 
 .Input{
   font-family: 'Common Pixel', sans-serif;
+}
+/* ----------------------------------- Projects block ----------------------------------- */
+
+.Projects_Subblock{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.Projects_Holder{
+  animation: appear 1s 9s;
+  width: 135px;
+  height: 135px;
+  margin: 0 5vw 0 5vw;
+}
+
+.Projects_Holder > img{
+  backdrop-filter: blur(3px);
+  z-index: 2;
+}
+
+.Projects_Holder > canvas{
+  position: relative;
+  top: -135px;
+  left: 0;
+  z-index: 3;
+  width: 131px;
+  height: 131px;
+}
+
+.Projects_Texts{
+  width: 50%;
+}
+
+.Right_Aligned_Text{
+  text-align: right;
+}
+
+@media (orientation: portrait){
+  .Projects_Subblock{
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .Projects_Subblock:first-child{
+    flex-direction:column-reverse;
+  }
+  .Projects_Texts{
+    width: 100%;
+    text-align: center;
+  }
 }
 /* ------------------------------------------------------------------------------------------------------ */

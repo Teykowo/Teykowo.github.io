@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="animated">
 <!-- ----------------------------------------------------- Header ----------------------------------------------------- -->
 <head>
   <meta charset="UTF-8">
@@ -14,36 +14,35 @@
           integrity="sha512-zhHQR0/H5SEBL3Wn6yYSaTTZej12z0hVZKOv3TwCUXT1z5qeqGcXJLLrbERYRScEDDpYIJhPC1fk31gqR783iQ=="
           crossorigin="anonymous" defer></script>
   <script src=https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.3.0/math.min.js defer></script>
-  <script src="Assets\Javascript\buffering.js" defer></script>
-  <script src="Assets\Javascript\initShadersPipeline.js" defer></script>
-  <script src="Assets\Javascript\resizeCanvas.js" defer></script>
+  <script src="Assets\Javascript\CanvasObject.js" defer></script>
   <script src="Assets\Javascript\randInterval.js" defer></script>
-  <script src="Assets\Javascript\objectWiseRendering.js" defer></script>
+  <script src="Assets\Javascript\drawBackground.js" defer></script>
   <script src="Assets\Shaders\fragmentShaderSource.js" defer></script>
   <script src="Assets\Shaders\vertexShaderSource.js" defer></script>
   <script src="Assets\Buffer_DATA\Cube.js" defer></script>
   <script src="Assets\RENDERING_PARAMS.js" defer></script>
+  <script src="Assets\app.js" defer></script>
   <!-- ------------------------------------------------------------------------------------------------------------------ -->
   <link rel="icon" type="image/png" href="Assets\img\thisIco.png">
 </head>
 <!-- ------------------------------------------------------------------------------------------------------------------ -->
+
 <!-- ------------------------------------------------- Option Buttons ------------------------------------------------- -->
 <label id="IntroSkipSwitch">
     <input id="IntroSkipValue" type="checkbox">
     <span class="Switch_Slider"></span>
 </label>
 <!-- ------------------------------------------------------------------------------------------------------------------ -->
+
 <!-- ------------------------------------------------ WebGL Cube Space ------------------------------------------------ -->
-<section id="Floating_Cube_Space_Section">
+<section id="Floating_Cube_Space_Section" class="animated">
     <video autoplay muted loop><source src="https://giant.gfycat.com/SparseAbandonedIndusriverdolphin.mp4", type="video/mp4"></video>
-    <canvas id="Background_Spawner"> 
-    </canvas>
+    <canvas id="Background_Spawner"></canvas>
 </section>
-<script src="Assets\Javascript\backgroundCanvasRendering.js" defer></script>
 <!-- ------------------------------------------------------------------------------------------------------------------ -->
 
 <!-- ------------------------------------------------- Main Page Body ------------------------------------------------- -->
-<section id="Main_Body_Section">
+<section id="Main_Body_Section" class="animated">
     <div id="Background_Cover" class="animated"></div>
     <div id="Main_Body" class="animated">
         <div id="Header_Holder">
@@ -70,28 +69,43 @@
         <div class="Cmd_Text animated">
             <h>Greetings, and welcome to Teyko's TeykOS. Rendering resumes since </h><h class="Cmd_Text Corrupted_Text">[@Yc$]</h><h>.</h>
             <br><br><br><br><br>
+        </div>
 
+
+        
+        <div class="REPL_Input Cmd_Text animated">
             <h>G:\TeykOS> </h><h class="Input">Skills</h> 
-            <p>Loading proficiency data: ║███████████████║ 100%<br> Done ↓</p>
-            <h style="white-space: pre-wrap;">Software:   [Python, Rust, C++, OpenGL]</h><br>
-            <h style="white-space: pre-wrap;">Web:        [CSS3, HTML5, JavaScript]</h><br>
-            <h style="white-space: pre-wrap;">Tools:      [GitHub, VSCode, Microsoft Azure, Docker, Kubernetes]</h>
-            <br><br><br>
+        </div>
 
+        <div id="Skills_Block" class="Cmd_Text animated">
+            <p>Loading proficiency data: ║███████████████║ 100%<br> Done ↓</p>
+            <h style="white-space: pre-wrap;">Software:      [Python, Rust, C++, OpenGL]</h><br>
+            <h style="white-space: pre-wrap;">Web:           [CSS3, HTML5, JavaScript]</h><br>
+            <h style="white-space: pre-wrap;">Technologies:  [GitHub, VSCode, Microsoft Azure, Docker, Kubernetes]</h>
+            <br><br><br>
+        </div>
+
+
+        <div class="REPL_Input Cmd_Text animated">
             <h>G:\TeykOS> </h><h class="Input">Projects</h> 
-            <div>
-                <p></p>
-                <div>
+        </div>
+
+        <div id="Projects_Block" class="Cmd_Text animated">
+            <div class="Projects_Subblock Right_Aligned_Text">
+                <p class="Projects_Texts">During my apprenticeship at Groupama©, I undertook the creation of a pedestrian counter using camera-based, 
+                                        IA-assisted image recognition and processing.</p>
+                <div class="Projects_Holder animated">
                     <img src="Assets/img/PCO_cube_bg.png">
-                    <canvas></canvas>
+                    <canvas id="PCO_Cube"></canvas>
                 </div>
             </div>
-            <div>
-                <p></p>
-                <div>
+            <div class="Projects_Subblock">
+                <div class="Projects_Holder animated">
                     <img src="Assets/img/hunter_cube_bg.png">
-                    <canvas></canvas>
+                    <canvas id="Hunter_Cube"></canvas>
                 </div>
+                <p class="Projects_Texts">Touched by the devestating effects of invasive species on local bio-diversity, 
+                                        I developped a Unity environment in which I trained a robot to look for, target, and eliminate a lionfish.</p>
             </div>
         </div>
     </div>
