@@ -44,14 +44,15 @@ class Canvas {
         this.projectionMatrix
     }  
 
-    setup(R,G,B,A,V, ObjectLoader, width = this.glContext.canvas.clientWidth, height = this.glContext.canvas.clientHeight) {
+    setup(R,G,B,A,V, ObjectLoader, width = window.innerWidth, height = window.innerHeight) {
         // Define the colour that will be used when erasing. Luminosity is defined as ''how close to 1''.
         this.setClearColour(R, G, B, A, V);
         this.SetShaders();
         this.setObject(ObjectLoader);
         // Resize the canvas to fit in the screen's resolution.
         this.resizeCanvas(width, height);
-        this.setPerspectiveMatrix();
+        // Setup the perspective using the ratio between *desired* width and height.
+        this.setPerspectiveMatrix(width/height);
     }
 
     setClearColour(R, G, B, A, V){
@@ -59,12 +60,10 @@ class Canvas {
         this.glContext.clearColor(R*V, G*V, B*V, A);
     }
 
-    setPerspectiveMatrix() {
+    setPerspectiveMatrix(aspectRatio) {
         // -------------------- The perspective matrix is shared for all objects --------------------
         // Create the projection matrix for the vertex shader.
         this.projectionMatrix = mat4.create();
-        // Get the aspect ratio of the current screen.
-        const aspectRatio = this.glContext.canvas.clientWidth / this.glContext.canvas.clientHeight;
         // glMatrix has a designated function for make perspective transformation matrices efficiently, it will be applied to the matrix given as first argument.
         mat4.perspective(this.projectionMatrix, 
                         this.renderingParams.projection.projec_fov, 
@@ -109,11 +108,13 @@ class Canvas {
     }
 
     resizeCanvas(width = window.innerWidth, height = window.innerHeight){
-        console.log(width, height)
-        devicePixelRatio = window.devicePixelRatio;
+        // Set a new perspective matrix given the new ratio.
+        this.setPerspectiveMatrix(width/height);
     
+        // Change the height and width given the new ratio.
         this.glContext.canvas.width = (width * devicePixelRatio);
         this.glContext.canvas.height = (height * devicePixelRatio);
+        console.log('b', this.glContext.canvas.width, this.glContext.canvas.height);
         this.glContext.viewport(0, 0, this.glContext.canvas.width, this.glContext.canvas.height);
     }
 
