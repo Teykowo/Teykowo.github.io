@@ -70,7 +70,7 @@ function main(){
 
     // ------------------------------------ -Event Listeners ------------------------------------
     let animatedElements = document.querySelectorAll('.animated');
-    window.addEventListener('resize', function() {canvasPCO.resizeCanvas(1920, 1080);
+    window.addEventListener('resize', function() {canvasBackground.resizeCanvas();
                                                   canvasesList.slice(1).forEach(canvas_i => {
                                                       canvas_i.resizeCanvas(131, 131);
                                                   });});
@@ -102,7 +102,7 @@ function main(){
         
         // Always start with cleaning the canvases.
         canvasesList.forEach(canvas_i => {
-            canvas_i.glContext.clear(canvasBackground.glContext.COLOR_BUFFER_BIT|canvasBackground.glContext.DEPTH_BUFFER_BIT);
+            canvas_i.glContext.clear(canvas_i.glContext.COLOR_BUFFER_BIT|canvas_i.glContext.DEPTH_BUFFER_BIT);
         });
 
         // timeSinceStart is first gathered using requestAnimationFrame wich gave us the time in ms since the document's time origin.
@@ -116,7 +116,7 @@ function main(){
 
         // Call the draw function.
         drawBackground(canvasBackground, deltaTime, timeSinceStart);
-        canvasesList.slice(1).forEach(canvas_i => {
+        canvasesList.slice(2).forEach(canvas_i => {
             canvas_i.objectWiseRendering(0, deltaTime)
         });
     
