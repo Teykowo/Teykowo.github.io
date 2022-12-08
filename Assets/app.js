@@ -116,7 +116,7 @@ function main(){
 
         // Call the draw function.
         drawBackground(canvasBackground, deltaTime, timeSinceStart);
-        canvasesList.slice(2).forEach(canvas_i => {
+        canvasesList.slice(1).forEach(canvas_i => {
             canvas_i.objectWiseRendering(0, deltaTime)
         });
     
