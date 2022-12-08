@@ -1,5 +1,7 @@
 class Canvas {
     constructor(Selector) {
+        // Give the object instance a name.
+        this.name = Selector;
         // We get the canvas element from our html, it's used to draw on using webGL.
         let HTMLCanvas = document.querySelector(Selector);
         // Canvas element have a webGL context, the same as the one we have to create when programming with openGL. We have to get this context to use the canvas as GL contexts
@@ -114,7 +116,6 @@ class Canvas {
         // Change the height and width given the new ratio.
         this.glContext.canvas.width = (width * devicePixelRatio);
         this.glContext.canvas.height = (height * devicePixelRatio);
-        console.log('b', this.glContext.canvas.width, this.glContext.canvas.height);
         this.glContext.viewport(0, 0, this.glContext.canvas.width, this.glContext.canvas.height);
     }
 

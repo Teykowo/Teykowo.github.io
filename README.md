@@ -7,7 +7,7 @@ As both a effort to make the website look pretty and for training purposes, this
 It is possible that I thus not work on every hardware and/or software. if such a case arises, 
 you may want to use a windows computer and chrome as a web browser, since these was the setup during developpement.
 
-You can disable the starting animation and switch colour modes in the options.
+You can disable the starting animation by clicking the switch in the upper left corner.
 
 You are free to use this template for non commercial ends as long as you add a link to the original github repository.
 Basic knowledge of computer graphics (shaders, buffering. GLSL, openGl/webGL), and linear algebra is recommended when browsing the code base, 

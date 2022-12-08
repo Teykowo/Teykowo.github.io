@@ -8,6 +8,8 @@ var animationDelay = parseFloat(getComputedStyle(mainBody).animationDelay.slice(
 var skipIntroFloat = 0;
 // Init a value to take the time each loop.
 var oldTime = 0;
+// Keep track of the list of canvas objects currently running.
+var canvasesList = [];
 // ------------------------------------------------------------------------------------------
 
 // Javascript doesn't read from top to bottom like python does, so we can make the function call now and define it later.
@@ -25,18 +27,35 @@ function main(){
     canvasBackground.rotVList.push([0.2, 0.4, 0.3]);
     canvasBackground.objectTimeAlive.push(0.0);
     canvasBackground.objectLifeSpan.push(animationDelay);
+    canvasesList.push(canvasBackground);
 
     canvasPCO = new Canvas('#PCO_Cube')
     canvasPCO.setup(1, 1, 1, 1, 0, 'cube()', 131, 131);
     canvasPCO.transVList.push([0.0, 0.0, -4.5]);
     canvasPCO.rotVList.push([0.2, 0.4, 0.3]);
     canvasPCO.objectTimeAlive.push(0.0);
+    canvasesList.push(canvasPCO);
 
     canvasHunter = new Canvas('#Hunter_Cube')
     canvasHunter.setup(1, 1, 1, 1, 0, 'cube()', 131, 131);
     canvasHunter.transVList.push([0.0, 0.0, -4.5]);
     canvasHunter.rotVList.push([-0.4, 0.2, 0.2]);
     canvasHunter.objectTimeAlive.push(0.0);
+    canvasesList.push(canvasHunter);
+
+    canvasAoC = new Canvas('#AdventOfCode_Cube')
+    canvasAoC.setup(1, 1, 1, 1, 0, 'cube()', 131, 131);
+    canvasAoC.transVList.push([0.0, 0.0, -4.5]);
+    canvasAoC.rotVList.push([0.1, 0.1, -0.4]);
+    canvasAoC.objectTimeAlive.push(0.0);
+    canvasesList.push(canvasAoC);
+
+    canvasIforme = new Canvas('#Iforme_Cube')
+    canvasIforme.setup(1, 1, 1, 1, 0, 'cube()', 131, 131);
+    canvasIforme.transVList.push([0.0, 0.0, -4.5]);
+    canvasIforme.rotVList.push([-0.2, 0.4, -0.2]);
+    canvasIforme.objectTimeAlive.push(0.0);
+    canvasesList.push(canvasIforme);
     // ------------------------------------------------------------------------------------------
     
     // ---------------------------------------- -Options ----------------------------------------
@@ -51,9 +70,10 @@ function main(){
 
     // ------------------------------------ -Event Listeners ------------------------------------
     let animatedElements = document.querySelectorAll('.animated');
-    window.addEventListener('resize', function() {canvasBackground.resizeCanvas(); 
-                                                  canvasPCO.resizeCanvas(131, 131); 
-                                                  canvasHunter.resizeCanvas(131, 131);});
+    window.addEventListener('resize', function() {canvasBackground.resizeCanvas();
+                                                  canvasesList.slice(1).forEach(canvas_i => {
+                                                      canvas_i.resizeCanvas(131, 131);
+                                                  });});
     skipIntro();
     introSkipSwitch.addEventListener('change', skipIntro);
     function skipIntro() {
@@ -61,9 +81,9 @@ function main(){
             localStorage.setItem("introSkipStoredValue", introSkipSwitch.checked);
             if (animationDelay > oldTime){
                 animationDelay = oldTime;
-                canvasBackground.animationEnd = true;
-                canvasPCO.animationEnd = true;
-                canvasHunter.animationEnd = true;
+                canvasesList.forEach(canvas_i => {
+                    canvas_i.animationEnd = true;
+                });
 
                 animatedElements.forEach((element) => {
                     element.style.animationDelay = '0s, 0s'
@@ -81,9 +101,9 @@ function main(){
     function renderingLoop(timeSinceStart) {
         
         // Always start with cleaning the canvases.
-        canvasBackground.glContext.clear(canvasBackground.glContext.COLOR_BUFFER_BIT|canvasBackground.glContext.DEPTH_BUFFER_BIT);
-        canvasHunter.glContext.clear(canvasHunter.glContext.COLOR_BUFFER_BIT|canvasHunter.glContext.DEPTH_BUFFER_BIT);
-        canvasPCO.glContext.clear(canvasPCO.glContext.COLOR_BUFFER_BIT|canvasPCO.glContext.DEPTH_BUFFER_BIT);
+        canvasesList.forEach(canvas_i => {
+            canvas_i.glContext.clear(canvas_i.glContext.COLOR_BUFFER_BIT|canvas_i.glContext.DEPTH_BUFFER_BIT);
+        });
 
         // timeSinceStart is first gathered using requestAnimationFrame wich gave us the time in ms since the document's time origin.
         // Multiplying this value changes the speed of animation transformations, meaning the next frame will have the figure move more or less.
@@ -96,8 +116,9 @@ function main(){
 
         // Call the draw function.
         drawBackground(canvasBackground, deltaTime, timeSinceStart);
-        canvasHunter.objectWiseRendering(0, deltaTime)
-        canvasPCO.objectWiseRendering(0, deltaTime)
+        canvasesList.slice(2).forEach(canvas_i => {
+            canvas_i.objectWiseRendering(0, deltaTime)
+        });
     
         // Make the function call recursive by recalling the renderingLoop function through requestAnimationFrame.
         requestAnimationFrame(renderingLoop);

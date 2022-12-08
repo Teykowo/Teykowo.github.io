@@ -9,6 +9,53 @@
 --title_colour: #BFB8AD;
 --logo_colour: #510D0A;
 }
+
+@keyframes appear{
+  0% {
+    opacity: 0%;
+  }
+  100%{
+    opacity: 100%;
+  }
+}
+
+@keyframes shrink{
+  0% {
+    width: 100%;
+  }
+  100%{
+    width: 70vw;
+  }
+}
+
+@keyframes lockScreen{
+  0% {
+    overflow-y: hidden;
+  }
+  100%{
+    overflow-y: unset;
+  }
+}
+
+@keyframes typing {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 50%;
+  }
+}
+
+@keyframes typingSmall {
+  0% {
+    width: 0;
+    white-space: nowrap;
+  }
+  100% {
+    width: fit-content;
+    white-space: normal;
+  }
+}
 /* ------------------------------------------------------------------------------------------------------ */
 body, html {
   height: 100vh;
@@ -20,19 +67,21 @@ body, html {
   animation: lockScreen 1s 8s both;
 }
 
-@keyframes lockScreen{
-  0% {
-    overflow-y: hidden;
-  }
-  100%{
-    overflow-y: unset;
-  }
-}
-/* ------------------------------------------ WebGL Cube Space ------------------------------------------ */
 section{
   position: absolute;
   min-height: 100%;
-  height: auto;
+  width: 100%;
+}
+/* ------------------------------------------ WebGL Cube Space ------------------------------------------ */
+#Floating_Cube_Space_Section{
+  position: fixed;
+}
+
+video, #Background_Spawner, #Background_Cover{
+  position: absolute;
+  top: 0px;
+  left:0px;
+  min-height: 100%;
   width: 100%;
 }
 
@@ -40,27 +89,27 @@ video{
   object-fit: fill;
 }
 
-video, #Background_Spawner{
-  position: absolute;
-  top: 0px;
-  left:0px;
-  min-height: 100%;
-  width: 100%;
+#Background_Cover{
+  backdrop-filter: blur(1px);
+  animation: appear 1s 6.9s both;
 }
 /* ------------------------------------------------------------------------------------------------------ */
 
 /* -------------------------------------------- Intro Switch -------------------------------------------- */
 #IntroSkipSwitch{
-  position: absolute;
-  display: block;
+  position: fixed;
   width: 60px;
   height: 34px;
-  left: 2px;
-  top: 2px;
-  z-index: 2;
+  margin: 1rem 1rem 0 1rem;
+  z-index: 4;
 }
 
-#IntroSkipSwitch input{
+#IntroSkipSwitch > label{
+  position: relative;
+  left: 65px;
+}
+
+#IntroSkipValue{
   opacity: 0;
   width: 0;
   height: 0;
@@ -102,7 +151,7 @@ input:checked + .Switch_Slider:before{
   -webkit-transform: translateX(26px);
   -ms-transform: translateX(26px);
   transform: translateX(26px);
-  background-color: var(--fg_colour_post);
+  background-color: #502c2c;
   content: "✔";
   color: var(--bg_colour_switch);
 }
@@ -115,17 +164,6 @@ input:checked + .Switch_Slider:before{
   justify-content: center;
 }
 
-#Background_Cover{
-  position: absolute;
-  min-height: 100%;
-  width: 100%;
-  backdrop-filter: blur(2px);
-  z-index: 0;
-
-  animation: appear 1s 6.9s;
-  animation-fill-mode: both;
-}
-
 #Main_Body{
   display: flex;
   flex-direction: column;
@@ -133,56 +171,15 @@ input:checked + .Switch_Slider:before{
   min-height: 100%;
   min-width: 400px;
   background-color: var(--fg_colour_pre);
-  z-index: 1;
-  
   animation: shrink 1s 8s, appear 1s 6.9s;
   animation-fill-mode: both;
 }
-
-@media (orientation: portrait){
-  #Main_Body{
-    min-width: 100vw;
-  }
-}
-
-@keyframes appear{
-  0% {
-    opacity: 0%;
-  }
-  100%{
-    opacity: 100%;
-  }
-}
-
-@keyframes shrink{
-  0% {
-    width: 100%;
-  }
-  100%{
-    width: 70vw;
-  }
-}
-
-#Skills_Block{
-  height: max-content;
-}
-
-#Projects_Block{
-  height: max-content;
-}
-
 /* -------------------------------- self appearing texts -------------------------------- */
 #Header_Holder{
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   margin-top: 34px;
-}
-
-@media (orientation: portrait){
-  #Header_Holder{
-    flex-direction: column-reverse;
-  }
 }
 
 #Header_Holder > .Cmd_Text{
@@ -195,6 +192,7 @@ input:checked + .Switch_Slider:before{
   font-family: monospace;
   overflow: hidden;
   margin: 2em 1rem 0 1rem;
+  max-width: 100%;
   letter-spacing: .15em;
   animation: typingSmall linear 1s 9s backwards;
   font-size: 1rem;
@@ -202,28 +200,8 @@ input:checked + .Switch_Slider:before{
 }
 
 .REPL_Input{
-  margin-top: 0;
+  margin: 1rem 1rem -2rem 1rem;
   height: 1.5em;
-}
-
-@keyframes typing {
-  0% {
-    width: 0;
-  }
-  100% {
-    width: 50%;
-  }
-}
-
-@keyframes typingSmall {
-  0% {
-    width: 0;
-    white-space: nowrap;
-  }
-  100% {
-    width: 100%;
-    white-space: wrap;
-  }
 }
 
 .Corrupted_Text{
@@ -247,27 +225,13 @@ input:checked + .Switch_Slider:before{
   animation: appear 2s 9s both;
 }
 
-@media (orientation: landscape){
-  @media (max-width: 1010px){
-    #Title{
-      display: none;
-    }
-  }
-}
-
-@media (max-width: 480px){
-  #Title{
-    display: none;
-  }
-  #Header_Holder > .Cmd_Text{
-    animation: typingSmall linear 1s 9s both;
-  }
-}
-
 .Input{
   font-family: 'Common Pixel', sans-serif;
 }
 /* ----------------------------------- Projects block ----------------------------------- */
+#Projects_Block > h3{
+  text-align: center;
+}
 
 .Projects_Subblock{
   display: flex;
@@ -279,23 +243,26 @@ input:checked + .Switch_Slider:before{
 
 .Projects_Holder{
   animation: appear 1s 9s;
-  width: 135px;
-  height: 135px;
+  width: 131px;
+  height: 131px;
   margin: 0 5vw 0 5vw;
+  text-align: left;
 }
 
 .Projects_Holder > img{
   backdrop-filter: blur(3px);
-  z-index: 2;
+  z-index: 4;
+  width: 130px;
+  height: 130px;
 }
 
 .Projects_Holder > canvas{
   position: relative;
   top: -135px;
-  left: 0;
-  z-index: 3;
-  width: 131px;
-  height: 131px;
+  left: -1px;
+  z-index: 5;
+  width: 133px;
+  height: 133px;
 }
 
 .Projects_Texts{
@@ -305,19 +272,50 @@ input:checked + .Switch_Slider:before{
 .Right_Aligned_Text{
   text-align: right;
 }
+/* ------------------------------------------------------------------------------------------------------ */
 
+/* ------------------------------------------- Media Specific ------------------------------------------- */
 @media (orientation: portrait){
+  #Main_Body{
+    min-width: 100vw;
+  }
+  #Header_Holder{
+    flex-direction: column-reverse;
+  }
+  #Title{
+    margin-left:  1rem;
+  }
   .Projects_Subblock{
     flex-direction: column;
     justify-content: center;
     align-items: center;
   }
-  .Projects_Subblock:first-child{
+  .Right_Aligned_Text{
     flex-direction:column-reverse;
   }
   .Projects_Texts{
     width: 100%;
     text-align: center;
+  }
+}
+
+@media (orientation: landscape){
+  @media (max-width: 1010px){
+    #Title{
+      display: none;
+    }
+  }
+}
+
+@media (max-width: 515px){
+  #Title{
+    display: none;
+  }
+  #Header_Holder > .Cmd_Text{
+    animation: typingSmall linear 1s 9s both;
+  }
+  #Projects_Block > h3{
+    font-size: large;
   }
 }
 /* ------------------------------------------------------------------------------------------------------ */
