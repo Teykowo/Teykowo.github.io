@@ -114,7 +114,6 @@ class Canvas {
         // Change the height and width given the new ratio.
         this.glContext.canvas.width = (width * devicePixelRatio);
         this.glContext.canvas.height = (height * devicePixelRatio);
-        console.log('b', this.glContext.canvas.width, this.glContext.canvas.height);
         this.glContext.viewport(0, 0, this.glContext.canvas.width, this.glContext.canvas.height);
     }
 
