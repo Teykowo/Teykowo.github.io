@@ -24,7 +24,7 @@
     width: 100%;
   }
   100%{
-    width: 70vw;
+    width: 50vw;
   }
 }
 
@@ -105,6 +105,7 @@ video{
 }
 
 #IntroSkipSwitch > label{
+  font-family: 'SpaceType', sans-serif;
   position: relative;
   left: 65px;
 }
@@ -220,13 +221,16 @@ input:checked + .Switch_Slider:before{
   font-size: 0.5rem;
   margin: 1em 1rem 0 0;
   max-width: fit-content;
-  white-space: pre;
   margin-left: -4rem;
   animation: appear 2s 9s both;
 }
 
+#Title > h{
+  white-space: pre;
+}
+
 .Input{
-  font-family: 'Common Pixel', sans-serif;
+  font-family: 'SpaceType', sans-serif;
 }
 /* ----------------------------------- Projects block ----------------------------------- */
 #Projects_Block > h3{
@@ -272,6 +276,25 @@ input:checked + .Switch_Slider:before{
 .Right_Aligned_Text{
   text-align: right;
 }
+/* -------------------------------- certifications block -------------------------------- */
+#Certificates_Block{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+  justify-content: space-evenly;
+  align-items: center;
+  margin-left: 0;
+}
+
+#Certificates_Block > div{
+  margin: 2em 0 0 0;
+}
+
+#Certificates_Block > div > h{
+  white-space: pre;
+  font-size: 1rem;
+}
 /* ------------------------------------------------------------------------------------------------------ */
 
 /* ------------------------------------------- Media Specific ------------------------------------------- */
@@ -297,10 +320,18 @@ input:checked + .Switch_Slider:before{
     width: 100%;
     text-align: center;
   }
+  #Certificates_Block > div > h{
+    font-size: 2.9vw;
+  }
 }
 
 @media (orientation: landscape){
-  @media (max-width: 1010px){
+  /* @media (max-width: 1010px){
+    #Title{
+      display: none;
+    }
+  } */
+  @media (max-width: 1455px){
     #Title{
       display: none;
     }
@@ -316,6 +347,10 @@ input:checked + .Switch_Slider:before{
   }
   #Projects_Block > h3{
     font-size: large;
+  }
+  .Input{
+    font-family: 'SpaceType', sans-serif;
+    font-size: small;
   }
 }
 /* ------------------------------------------------------------------------------------------------------ */
