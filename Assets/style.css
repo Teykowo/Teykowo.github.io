@@ -4,10 +4,14 @@
 --bg_colour: rgb(235, 236, 237);
 --fg_colour_pre: rgb(0, 0, 0);
 --fg_colour_post: rgb(15, 13, 13);
---cube_colour: #ff2315;
+
 --txt_colour: #f3f3f2;
---title_colour: #BFB8AD;
---logo_colour: #510D0A;
+--corrupted_txt_colour_A: #3d2f2f;
+--corrupted_txt_colour_B: #502c2c;
+
+--link_colour: #BFB8AD;
+--hover_link_colour: #57514a;
+--visited_link_colour: #92897c;
 }
 
 @keyframes appear{
@@ -152,7 +156,7 @@ input:checked + .Switch_Slider:before{
   -webkit-transform: translateX(26px);
   -ms-transform: translateX(26px);
   transform: translateX(26px);
-  background-color: #502c2c;
+  background-color: var(--corrupted_txt_colour_B);
   content: "✔";
   color: var(--bg_colour_switch);
 }
@@ -175,7 +179,7 @@ input:checked + .Switch_Slider:before{
   animation: shrink 1s 8s, appear 1s 6.9s;
   animation-fill-mode: both;
 }
-/* -------------------------------- self appearing texts -------------------------------- */
+/* ------------------------------ -Header and Skills Block ------------------------------ */
 #Header_Holder{
   display: flex;
   flex-direction: row;
@@ -209,7 +213,7 @@ input:checked + .Switch_Slider:before{
   font-family: 'Common Pixel', sans-serif;
   margin: 2em 0 0 0;
   color: transparent;
-  background: linear-gradient(to left, #3d2f2f, #502c2c);
+  background: linear-gradient(to left, var(--corrupted_txt_colour_A), var(--corrupted_txt_colour_B));
   background-clip: text;
   -webkit-background-clip: text;
 }
@@ -232,6 +236,49 @@ input:checked + .Switch_Slider:before{
 .Input{
   font-family: 'SpaceType', sans-serif;
 }
+
+a{
+  text-decoration: none;
+  color: var(--link_colour);
+}
+a:hover, a:visited:hover{
+  color: var(--hover_link_colour);
+}
+a:visited {
+  color: var(--visited_link_colour);
+}
+/* ----------------------------------- Contacts block ----------------------------------- */
+#Contacts_Block{
+  display: flex;
+  flex-direction: row;
+}
+#Contacts_Block > div{
+  display: flex;
+  flex-direction: column;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+/* ------------------------------------ Skills block ------------------------------------ */
+#Skills_Block > div{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+#Skills_Block > div > div{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+#Skills_Block > div > div > h{
+  width: 70%;
+  break-after: always;
+}
+#Skills_Block > div > div > h:first-child{
+  width: 25%;
+  min-width: 9em;
+}
+
 /* ----------------------------------- Projects block ----------------------------------- */
 #Projects_Block > h3{
   text-align: center;
@@ -267,6 +314,10 @@ input:checked + .Switch_Slider:before{
   z-index: 5;
   width: 133px;
   height: 133px;
+}
+
+.Projects_Holder > canvas:hover{
+  cursor: pointer;
 }
 
 .Projects_Texts{
@@ -323,6 +374,13 @@ input:checked + .Switch_Slider:before{
   #Certificates_Block > div > h{
     font-size: 2.9vw;
   }
+  @media (max-width: 686px){
+    #Contacts_Block{
+      display: flex;
+      flex-direction: column;
+      max-width: 90%;
+    }
+  }
 }
 
 @media (orientation: landscape){
@@ -331,9 +389,32 @@ input:checked + .Switch_Slider:before{
       display: none;
     }
   } */
-  @media (max-width: 1455px){
+  @media (max-width: 1364px){
     #Title{
       display: none;
+    }
+    #Contacts_Block{
+      display: flex;
+      flex-direction: column;
+      max-width: 90%;
+    }
+  }
+
+  @media (max-width: 1200px){
+    #Title{
+      display: block;
+    }
+    #Main_Body{
+      width: 70vw !important;
+    }
+  }
+
+  @media (max-width: 975px){
+    #Title{
+      display: none;
+    }
+    #Main_Body{
+      width: 70vw !important;
     }
   }
 }
@@ -353,4 +434,6 @@ input:checked + .Switch_Slider:before{
     font-size: small;
   }
 }
+
+
 /* ------------------------------------------------------------------------------------------------------ */

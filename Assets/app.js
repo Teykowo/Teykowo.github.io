@@ -74,6 +74,8 @@ function main(){
                                                   canvasesList.slice(1).forEach(canvas_i => {
                                                       canvas_i.resizeCanvas(131, 131);
                                                   });});
+    canvasPCO.HTMLCanvas.addEventListener('click', function(){window.open("Assets/img/PCO_Paper.pdf")})
+
     skipIntro();
     introSkipSwitch.addEventListener('change', skipIntro);
     function skipIntro() {
