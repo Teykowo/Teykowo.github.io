@@ -3,10 +3,10 @@ class Canvas {
         // Give the object instance a name.
         this.name = Selector;
         // We get the canvas element from our html, it's used to draw on using webGL.
-        let HTMLCanvas = document.querySelector(Selector);
+        this.HTMLCanvas = document.querySelector(Selector);
         // Canvas element have a webGL context, the same as the one we have to create when programming with openGL. We have to get this context to use the canvas as GL contexts
         // hold all the fonction used to comunicate with the GPU.
-        this.glContext = HTMLCanvas.getContext('webgl');
+        this.glContext = this.HTMLCanvas.getContext('webgl');
         // Get the parameters defined in the parameter file.
         this.renderingParams = RENDERING_PARAMS(this.glContext);
 
@@ -28,7 +28,7 @@ class Canvas {
 
         // Var setup.
         // Defined how many objects (including the main one at the start for the animation) we want in our canvas.
-        this.objectCount = 6
+        this.objectCount = 10
         // Hold the translation vectors of each elements.
         this.transVList = [];
         // Hold the rotation vectors of each elements.

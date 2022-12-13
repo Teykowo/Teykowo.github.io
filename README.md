@@ -1,9 +1,11 @@
 # Teykowo.github.io
+WIP.
+
 Github Page for Teyko
 
 This project is a attempt at an online curriculum vitæ using github's generous offer of hosting a custom website for free.
 
-As both a effort to make the website look pretty and for training purposes, this website uses webGL for graphic rendering.
+As both an effort to make the website look pretty and for training purposes, this website uses webGL for graphic rendering.
 It is possible that I thus not work on every hardware and/or software. if such a case arises, 
 you may want to use a windows computer and chrome as a web browser, since these was the setup during developpement.
 
