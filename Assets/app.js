@@ -56,6 +56,13 @@ function main(){
     canvasIforme.rotVList.push([-0.2, 0.4, -0.2]);
     canvasIforme.objectTimeAlive.push(0.0);
     canvasesList.push(canvasIforme);
+
+    canvasPages = new Canvas('#Pages_Cube')
+    canvasPages.setup(1, 1, 1, 1, 0, 'cube()', 131, 131);
+    canvasPages.transVList.push([0.0, 0.0, -4.5]);
+    canvasPages.rotVList.push([-0.2, -0.4, 0.4]);
+    canvasPages.objectTimeAlive.push(0.0);
+    canvasesList.push(canvasPages);
     // ------------------------------------------------------------------------------------------
     
     // ---------------------------------------- -Options ----------------------------------------
@@ -70,14 +77,17 @@ function main(){
 
     // ------------------------------------ -Event Listeners ------------------------------------
     let animatedElements = document.querySelectorAll('.animated');
-    window.addEventListener('resize', function() {canvasBackground.resizeCanvas();
-                                                  canvasesList.slice(1).forEach(canvas_i => {
-                                                      canvas_i.resizeCanvas(131, 131);
-                                                  });});
-    canvasPCO.HTMLCanvas.addEventListener('click', function(){window.open("Assets/img/PCO_Paper.pdf")})
+    let rewriteTechH = document.getElementById('rewriteTech');
 
-    skipIntro();
     introSkipSwitch.addEventListener('change', skipIntro);
+
+    window.addEventListener('resize', onResize);
+
+    canvasPCO.HTMLCanvas.addEventListener('click', function(){window.open("Assets/img/PCO_Paper.pdf")})
+    canvasHunter.HTMLCanvas.addEventListener('click', function(){window.open("https://github.com/Teykowo/Reinforcement-Learning-Hunter")})
+    canvasAoC.HTMLCanvas.addEventListener('click', function(){window.open("https://github.com/Teykowo/AdventOfCode-One_Language_A_Day")})
+    canvasPages.HTMLCanvas.addEventListener('click', function(){window.open("https://github.com/Teykowo/Teykowo.github.io")})
+    
     function skipIntro() {
         if (introSkipSwitch.checked){
             localStorage.setItem("introSkipStoredValue", introSkipSwitch.checked);
@@ -96,6 +106,23 @@ function main(){
             localStorage.setItem("introSkipStoredValue", introSkipSwitch.checked);
         }
     }
+
+    function onResize(){
+        canvasBackground.resizeCanvas();
+        canvasesList.slice(1).forEach(canvas_i => {
+            canvas_i.resizeCanvas(131, 131);
+        });
+
+        if (window.innerWidth < 530){
+            rewriteTechH.textContent = 'Techs:';
+        } else {
+            rewriteTechH.textContent = 'Technologies:';
+        };
+    }
+
+    // Each function should be called at least once at the start.
+    skipIntro();
+    onResize();
     // ------------------------------------------------------------------------------------------
 
     // ------------------------------------- Rendering Loop -------------------------------------

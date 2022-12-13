@@ -28,7 +28,7 @@ class Canvas {
 
         // Var setup.
         // Defined how many objects (including the main one at the start for the animation) we want in our canvas.
-        this.objectCount = 6
+        this.objectCount = 10
         // Hold the translation vectors of each elements.
         this.transVList = [];
         // Hold the rotation vectors of each elements.

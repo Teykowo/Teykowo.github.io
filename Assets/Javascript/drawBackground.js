@@ -34,11 +34,11 @@ function drawBackground(canvas, deltaTime, timeSinceStart){
         switch(true){
             case (timeSinceStart < animationDelay && i === 0):
                 sumPosition = 2;
-                canvas.transVList[i] = [0, 0, Math.min((-20+((timeSinceStart**4)*0.01)), 0)];
+                canvas.transVList[i] = [0, 0, Math.min((-20+(((timeSinceStart+3)**4)*0.01)), 0)];
                 break;
             case (timeSinceStart < animationDelay && i != 0):
                 sumPosition = canvas.transVList[i].slice(0, 2).reduce((a, b) => Math.abs(a) + Math.abs(b));
-                canvas.transVList[i] = [canvas.transVList[i][0]/(1 + timeSinceStart * 0.01), canvas.transVList[i][1]/(1 + timeSinceStart * 0.01), canvas.transVList[i][2]];
+                canvas.transVList[i] = [canvas.transVList[i][0]/(1 + (timeSinceStart+3) * 0.01), canvas.transVList[i][1]/(1 + (timeSinceStart+3) * 0.01), canvas.transVList[i][2]];
                 break;
             case (canvas.animationEnd):
                 canvas.objectCount = 80;

@@ -6,6 +6,7 @@
 --fg_colour_post: rgb(15, 13, 13);
 
 --txt_colour: #f3f3f2;
+--caret_colour: #4b4b4a;
 --corrupted_txt_colour_A: #3d2f2f;
 --corrupted_txt_colour_B: #502c2c;
 
@@ -23,12 +24,13 @@
   }
 }
 
+
 @keyframes shrink{
-  0% {
-    width: 100%;
+  from{
+    width: 100vw;
   }
-  100%{
-    width: 50vw;
+  to{
+    width: 55rem;
   }
 }
 
@@ -60,6 +62,23 @@
     white-space: normal;
   }
 }
+
+@keyframes blink-caret {
+  from, to { border-color: transparent }
+  50% { border-color: var(--caret_colour); }
+}
+
+@keyframes typing_REPL{
+  0% {
+    width: 7rem;
+  }
+  99% {
+    width: 17rem;
+  }
+  100% {
+    width: fit-content;
+  }
+}
 /* ------------------------------------------------------------------------------------------------------ */
 body, html {
   height: 100vh;
@@ -68,7 +87,7 @@ body, html {
   margin: 0;
   overflow-x: hidden;
   background-color: var(--bg_colour);
-  animation: lockScreen 1s 8s both;
+  animation: lockScreen 1s 5s both;
 }
 
 section{
@@ -95,7 +114,7 @@ video{
 
 #Background_Cover{
   backdrop-filter: blur(1px);
-  animation: appear 1s 6.9s both;
+  animation: appear 1s 3.9s both;
 }
 /* ------------------------------------------------------------------------------------------------------ */
 
@@ -173,11 +192,8 @@ input:checked + .Switch_Slider:before{
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  min-height: 100%;
-  min-width: 400px;
   background-color: var(--fg_colour_pre);
-  animation: shrink 1s 8s, appear 1s 6.9s;
-  animation-fill-mode: both;
+  animation: shrink 1s 5s both, appear 1s 3.9s both;
 }
 /* ------------------------------ -Header and Skills Block ------------------------------ */
 #Header_Holder{
@@ -188,7 +204,7 @@ input:checked + .Switch_Slider:before{
 }
 
 #Header_Holder > .Cmd_Text{
-  animation: typing linear 1s 9s backwards;
+  animation: typing linear 1s 6s backwards;
   white-space: nowrap;
 }
 
@@ -199,7 +215,7 @@ input:checked + .Switch_Slider:before{
   margin: 2em 1rem 0 1rem;
   max-width: 100%;
   letter-spacing: .15em;
-  animation: typingSmall linear 1s 9s backwards;
+  animation: typingSmall linear 1s 6s backwards;
   font-size: 1rem;
   width: fit-content;
 }
@@ -207,6 +223,8 @@ input:checked + .Switch_Slider:before{
 .REPL_Input{
   margin: 1rem 1rem -2rem 1rem;
   height: 1.5em;
+  text-overflow: clip;
+  white-space: nowrap;
 }
 
 .Corrupted_Text{
@@ -226,7 +244,7 @@ input:checked + .Switch_Slider:before{
   margin: 1em 1rem 0 0;
   max-width: fit-content;
   margin-left: -4rem;
-  animation: appear 2s 9s both;
+  animation: appear 2s 6s both;
 }
 
 #Title > h{
@@ -248,10 +266,16 @@ a:visited {
   color: var(--visited_link_colour);
 }
 /* ----------------------------------- Contacts block ----------------------------------- */
+#Contacts_REPL{
+  animation: typing_REPL 0.5s 6.7s both, appear 0s 6.5s both;
+}
+
 #Contacts_Block{
+  animation: appear 0s 7.3s both;
   display: flex;
   flex-direction: row;
 }
+
 #Contacts_Block > div{
   display: flex;
   flex-direction: column;
@@ -260,26 +284,48 @@ a:visited {
   overflow: hidden;
 }
 /* ------------------------------------ Skills block ------------------------------------ */
+#Skills_REPL{
+  animation: typing_REPL 0.5s 7.5s both, appear 0s 7.3s both;
+}
+
+#Skills_Block{
+  animation: appear 0.0s 7.6s both;
+}
+
+#Skills_Block > *{
+  margin-left: 1em;
+}
+
 #Skills_Block > div{
   display: flex;
   flex-direction: column;
   width: 100%;
 }
+
 #Skills_Block > div > div{
   display: flex;
   flex-direction: row;
-  width: 100%;
+  width: 99%;
 }
+
 #Skills_Block > div > div > h{
   width: 70%;
-  break-after: always;
 }
+
 #Skills_Block > div > div > h:first-child{
-  width: 25%;
-  min-width: 9em;
+  width: 30%;
+  min-width: 7rem;
 }
 
 /* ----------------------------------- Projects block ----------------------------------- */
+#Projects_REPL{
+  animation: typing_REPL 0.5s 7.8s both, appear 0s 7.6s both;
+}
+
+#Projects_Block{
+  animation: appear 0s 8.4s both;
+}
+
 #Projects_Block > h3{
   text-align: center;
 }
@@ -293,7 +339,6 @@ a:visited {
 }
 
 .Projects_Holder{
-  animation: appear 1s 9s;
   width: 131px;
   height: 131px;
   margin: 0 5vw 0 5vw;
@@ -328,7 +373,12 @@ a:visited {
   text-align: right;
 }
 /* -------------------------------- certifications block -------------------------------- */
+#Certificates_REPL{
+  animation: typing_REPL 0.5s 8.6s both, appear 0.0s 8.4s both;
+}
+
 #Certificates_Block{
+  animation: appear 0s 9.2s both;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -348,6 +398,20 @@ a:visited {
 }
 /* ------------------------------------------------------------------------------------------------------ */
 
+/* --------------------------------------- Scroll Bar & Navigator --------------------------------------- */
+::-webkit-scrollbar{
+  color: #aba499;
+}
+::-webkit-scrollbar-thumb{
+  background-color: var(--fg_colour_post);
+}
+
+::selection{
+  background: #b8b6b6;
+  color: #292929;
+}
+/* ------------------------------------------------------------------------------------------------------ */
+
 /* ------------------------------------------- Media Specific ------------------------------------------- */
 @media (orientation: portrait){
   #Main_Body{
@@ -357,7 +421,7 @@ a:visited {
     flex-direction: column-reverse;
   }
   #Title{
-    margin-left:  1rem;
+    margin-left: 1rem;
   }
   .Projects_Subblock{
     flex-direction: column;
@@ -384,37 +448,11 @@ a:visited {
 }
 
 @media (orientation: landscape){
-  /* @media (max-width: 1010px){
-    #Title{
-      display: none;
-    }
-  } */
-  @media (max-width: 1364px){
-    #Title{
-      display: none;
-    }
+  @media (max-width: 695px){
     #Contacts_Block{
       display: flex;
       flex-direction: column;
       max-width: 90%;
-    }
-  }
-
-  @media (max-width: 1200px){
-    #Title{
-      display: block;
-    }
-    #Main_Body{
-      width: 70vw !important;
-    }
-  }
-
-  @media (max-width: 975px){
-    #Title{
-      display: none;
-    }
-    #Main_Body{
-      width: 70vw !important;
     }
   }
 }
@@ -424,7 +462,7 @@ a:visited {
     display: none;
   }
   #Header_Holder > .Cmd_Text{
-    animation: typingSmall linear 1s 9s both;
+    animation: typingSmall linear 1s 6s both;
   }
   #Projects_Block > h3{
     font-size: large;
@@ -434,6 +472,13 @@ a:visited {
     font-size: small;
   }
 }
-
-
 /* ------------------------------------------------------------------------------------------------------ */
+
+#Final_REPL{
+  animation: appear 0s 9.2s both;
+}
+
+#Final_REPL > h{
+  border-right: .10rem solid var(--caret_colour);
+  animation: blink-caret .75s step-end infinite;
+}
