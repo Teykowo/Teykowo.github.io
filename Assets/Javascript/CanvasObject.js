@@ -31,6 +31,8 @@ class Canvas {
         this.objectCount = 10
         // Hold the translation vectors of each elements.
         this.transVList = [];
+        // Hold the decided, unmodified depth of the elements.
+        this.depthList = [];
         // Hold the rotation vectors of each elements.
         this.rotVList = [];
         // Hold the life spanned by each object.

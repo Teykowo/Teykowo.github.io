@@ -18,7 +18,6 @@ main();
 // ------------------------------------------------- -Main Function -------------------------------------------------
 // We now define the main function which is called when the script is read.
 function main(){
-
     // ----------------------------------- Canvas Class Inits -----------------------------------
     canvasBackground = new Canvas('#Background_Spawner')
     canvasBackground.setup(235/255, 236/255, 237/255, 1, 1, 'cube()')
@@ -76,6 +75,9 @@ function main(){
     // ------------------------------------------------------------------------------------------
 
     // ------------------------------------ -Event Listeners ------------------------------------
+    // Set a timeout so as to start at the top of the page, we should clear the timeout when the animation skip button is clicked so as not to scroll back long after page load.
+    const scrollTimeout = setTimeout(function(){window.scrollTo(0, 0)}, animationDelay*1000);
+
     let animatedElements = document.querySelectorAll('.animated');
     let rewriteTechH = document.getElementById('rewriteTech');
 
@@ -88,8 +90,16 @@ function main(){
     canvasAoC.HTMLCanvas.addEventListener('click', function(){window.open("https://github.com/Teykowo/AdventOfCode-One_Language_A_Day")})
     canvasPages.HTMLCanvas.addEventListener('click', function(){window.open("https://github.com/Teykowo/Teykowo.github.io")})
     
+    function terminateAnimations() {
+        animatedElements.forEach((element) => {
+            element.style.animationDelay = '0s, 0s'
+            element.style.animationDuration = '0s, 0s'
+        });
+    }
+
     function skipIntro() {
         if (introSkipSwitch.checked){
+            clearTimeout(scrollTimeout);
             localStorage.setItem("introSkipStoredValue", introSkipSwitch.checked);
             if (animationDelay > oldTime){
                 animationDelay = oldTime;
@@ -97,10 +107,7 @@ function main(){
                     canvas_i.animationEnd = true;
                 });
 
-                animatedElements.forEach((element) => {
-                    element.style.animationDelay = '0s, 0s'
-                    element.style.animationDuration = '0s, 0s'
-                });
+                terminateAnimations();
             }
         }else{
             localStorage.setItem("introSkipStoredValue", introSkipSwitch.checked);
@@ -123,6 +130,9 @@ function main(){
     // Each function should be called at least once at the start.
     skipIntro();
     onResize();
+
+    let lastAnimationTime = parseFloat(getComputedStyle(document.querySelector('#Final_REPL')).animationDelay.slice(0, 2));
+    setTimeout(terminateAnimations, lastAnimationTime*1000);
     // ------------------------------------------------------------------------------------------
 
     // ------------------------------------- Rendering Loop -------------------------------------

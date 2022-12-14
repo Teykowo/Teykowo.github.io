@@ -364,6 +364,9 @@ a:visited {
 .Projects_Holder > canvas:hover{
   cursor: pointer;
 }
+#Iforme_Cube:hover{
+  cursor: default;
+}
 
 .Projects_Texts{
   width: 50%;
