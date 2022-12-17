@@ -17,10 +17,11 @@
   <script src=https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.3.0/math.min.js defer></script>
   <script src="Assets\Javascript\CanvasObject.js" defer></script>
   <script src="Assets\Javascript\randInterval.js" defer></script>
+  <script src="Assets\Javascript\gapRandInterval.js" defer></script>
   <script src="Assets\Javascript\drawBackground.js" defer></script>
+  <script src="Assets\Javascript\ObjLoader.js" defer></script>
   <script src="Assets\Shaders\fragmentShaderSource.js" defer></script>
   <script src="Assets\Shaders\vertexShaderSource.js" defer></script>
-  <script src="Assets\Buffer_DATA\Cube.js" defer></script>
   <script src="Assets\RENDERING_PARAMS.js" defer></script>
   <script src="Assets\app.js" defer></script>
   <!-- ------------------------------------------------------------------------------------------------------------------ -->
@@ -46,6 +47,9 @@
 
 <!-- ------------------------------------------------- Main Page Body ------------------------------------------------- -->
 <section id="Main_Body_Section" class="animated">
+    <div id="Main_Background" class="animated">
+        <canvas id="MainBackground_Canvas"></canvas>
+    </div>
     <div id="Main_Body" class="animated">
         <div id="Header_Holder">
             <div class="Cmd_Text animated">

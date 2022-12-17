@@ -24,7 +24,6 @@
   }
 }
 
-
 @keyframes shrink{
   from{
     width: 100vw;
@@ -95,7 +94,7 @@ section{
   min-height: 100%;
   width: 100%;
 }
-/* ------------------------------------------ WebGL Cube Space ------------------------------------------ */
+/* ------------------------------------ WebGL Background Cubes Space ------------------------------------ */
 #Floating_Cube_Space_Section{
   position: fixed;
 }
@@ -182,6 +181,15 @@ input:checked + .Switch_Slider:before{
 /* ------------------------------------------------------------------------------------------------------ */
 
 /* ----------------------------------------- Main Body Contents ----------------------------------------- */
+#Main_Background{
+  display: flex;
+  justify-content: center;
+  position: fixed;
+  background-color: var(--fg_colour_pre);
+  height: 100%;
+  animation: shrink 1s 5s both, appear 1s 3.9s both;
+}
+
 #Main_Body_Section{
   display: flex;
   flex-direction: row;
@@ -193,7 +201,8 @@ input:checked + .Switch_Slider:before{
   flex-direction: column;
   justify-content: flex-start;
   background-color: var(--fg_colour_pre);
-  animation: shrink 1s 5s both, appear 1s 3.9s both;
+  animation: shrink 1s 5s both, appear 1s 3.9s backwards;
+  opacity: 90%;
 }
 /* ------------------------------ -Header and Skills Block ------------------------------ */
 #Header_Holder{
@@ -363,6 +372,9 @@ a:visited {
 
 .Projects_Holder > canvas:hover{
   cursor: pointer;
+}
+#Iforme_Cube:hover{
+  cursor: default;
 }
 
 .Projects_Texts{

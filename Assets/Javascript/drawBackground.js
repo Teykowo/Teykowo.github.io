@@ -2,35 +2,34 @@
 function drawBackground(canvas, deltaTime, timeSinceStart){
     
     // Optional block (if removed, increase base block number)
-    switch(true){
-        case (timeSinceStart%0.3 < timeSinceStart*0.05 && timeSinceStart < animationDelay):
-            var translateVector = [randInterval(-35., 35.), randInterval(-25., 25.), randInterval(-40., -22.)];
-            var rotationVector = [randInterval(0.1, 0.5), randInterval(0.1, 0.5), randInterval(0.1, 0.5)];
+    if (timeSinceStart%0.3 < timeSinceStart*0.1 && timeSinceStart < animationDelay){
+        let translateVector = [randInterval(-35., 35.), randInterval(-25., 25.), randInterval(-40., -22.)];
+        let rotationVector = [randInterval(0.1, 0.5), randInterval(0.1, 0.5), randInterval(0.1, 0.5)];
+        canvas.objectTimeAlive.push(0.0);
+        canvas.objectLifeSpan.push(randInterval(30.0, 100.0));
+        canvas.transVList.push(translateVector);
+        canvas.depthList.push(translateVector[2]);
+        canvas.rotVList.push(rotationVector);
+    } else {
+        // Refurbish the list of objects if needed.
+        while (canvas.transVList.length < canvas.objectCount){
+            let translateVector = [gapRandInterval(-25., -10, 10, 25.), randInterval(-15., 15.), randInterval(-40., -22.)];
+            let rotationVector = [randInterval(0.1, 0.5), randInterval(0.1, 0.5), randInterval(0.1, 0.5)];
             canvas.objectTimeAlive.push(0.0);
-            canvas.objectLifeSpan.push(randInterval(30.0, 100.0));
+            canvas.objectLifeSpan.push(randInterval(10000.0, 10000.0));
             canvas.transVList.push(translateVector);
+            canvas.depthList.push(translateVector[2]);
             canvas.rotVList.push(rotationVector);
-            break;
-
-        default:
-            // Refurbish the list of objects if needed.
-            while (canvas.transVList.length < canvas.objectCount){
-                var translateVector = [randInterval(-25., 25.), randInterval(-15., 15.), randInterval(-40., -22.)];
-                var rotationVector = [randInterval(0.1, 0.5), randInterval(0.1, 0.5), randInterval(0.1, 0.5)];
-                canvas.objectTimeAlive.push(0.0);
-                canvas.objectLifeSpan.push(randInterval(30.0, 100.0));
-                canvas.transVList.push(translateVector);
-                canvas.rotVList.push(rotationVector);
-            };
-            break;
+        };
     }
 
-    if(timeSinceStart > animationDelay && timeSinceStart < (animationDelay + 0.01)){
+
+    if(timeSinceStart > animationDelay && timeSinceStart < (animationDelay + 0.03)){
         canvas.animationEnd = true;
     }
     
-    for (i = 0; i < canvas.transVList.length; i++){
-        var sumPosition = 0;
+    for (let i = 0; i < canvas.transVList.length; i++){
+        let sumPosition = 0;
         switch(true){
             case (timeSinceStart < animationDelay && i === 0):
                 sumPosition = 2;
@@ -45,13 +44,24 @@ function drawBackground(canvas, deltaTime, timeSinceStart){
                 canvas.objectLifeSpan[i] = 0;
                 break
             default:
+                // let timeTillDeath = canvas.objectLifeSpan[i] - canvas.objectTimeAlive[i]
+                // switch(true){
+                //     case (canvas.objectTimeAlive[i] < 2):
+                //         canvas.transVList[i] = [canvas.transVList[i][0], canvas.transVList[i][1], Math.min((-100 * ((2-canvas.objectTimeAlive[i])/2)), canvas.depthList[i])];
+                //         break;
+                //     case (timeTillDeath < 2):
+                //         canvas.transVList[i] = [canvas.transVList[i][0], canvas.transVList[i][1], Math.min((-100 * ((2-timeTillDeath)/2)), canvas.depthList[i])];
+                //         break;
+                //     default: 
+                //         break;
+                // }
                 sumPosition = canvas.transVList[i].reduce((a, b) => Math.abs(a) + Math.abs(b));
                 break;
         }
 
         canvas.objectWiseRendering(i, deltaTime);
 
-        if (sumPosition < 1 || canvas.objectTimeAlive[i] > canvas.objectLifeSpan[i]){
+        if ((sumPosition < 1 && timeSinceStart < animationDelay) || canvas.objectTimeAlive[i] > canvas.objectLifeSpan[i]){
             canvas.transVList.splice(i, 1);
             canvas.objectLifeSpan.splice(i, 1);
             canvas.rotVList.splice(i,1);

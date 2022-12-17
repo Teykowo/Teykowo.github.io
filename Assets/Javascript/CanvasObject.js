@@ -31,6 +31,10 @@ class Canvas {
         this.objectCount = 10
         // Hold the translation vectors of each elements.
         this.transVList = [];
+        // Hold the number of vertices of the shape rendered by this canvas.
+        this.vertexCountList = null;
+        // Hold the decided, unmodified depth of the elements.
+        this.depthList = [];
         // Hold the rotation vectors of each elements.
         this.rotVList = [];
         // Hold the life spanned by each object.
@@ -41,25 +45,26 @@ class Canvas {
         this.animationEnd = false;
 
         this.rotationSpeed = 10;
-        this.pipelineAddresses;
-        this.bufferLibrary;
-        this.projectionMatrix
+        this.pipelineAddresses = {};
+        this.bufferLibrary = {};
+        this.projectionMatrix = [];
     }  
 
-    setup(R,G,B,A,V, ObjectLoader, width = window.innerWidth, height = window.innerHeight) {
+    setup(clearColourArray, objectPath, width = window.innerWidth, height = window.innerHeight, fillColourArray = [0., 0., 0., 0.]) {
         // Define the colour that will be used when erasing. Luminosity is defined as ''how close to 1''.
-        this.setClearColour(R, G, B, A, V);
+        this.setClearColour(clearColourArray);
         this.SetShaders();
-        this.setObject(ObjectLoader);
+        this.setObject(objectPath, fillColourArray);
         // Resize the canvas to fit in the screen's resolution.
         this.resizeCanvas(width, height);
         // Setup the perspective using the ratio between *desired* width and height.
         this.setPerspectiveMatrix(width/height);
     }
 
-    setClearColour(R, G, B, A, V){
+    setClearColour(clearColourArray){
+        let [RClear, GClear, BClear, AClear, VClear] = clearColourArray;
         // V value of HSV
-        this.glContext.clearColor(R*V, G*V, B*V, A);
+        this.glContext.clearColor(RClear*VClear, GClear*VClear, BClear*VClear, AClear);
     }
 
     setPerspectiveMatrix(aspectRatio) {
@@ -159,14 +164,21 @@ class Canvas {
         return shaderPipeline;
     }
 
-    setObject(objectLoader) {
-        let object = eval(objectLoader);
+    async setObject(objectPath, fillColourArray) {
+        // Instantiate a new object loader.
+        let objectLoader = new ObjLoader();
+        // Load the object using the path to the obj file and the desires object colour. 
+        // Since we use fetch, we must await the promise's completion.
+        let object = await objectLoader.loadFile(objectPath, fillColourArray); 
+
         // Vertex coordinates.
         const vertexData = object[0];
         // The colour matrix has one column for each value in the RGBA format
         const vertexColoursData = object[1];
         // This array defines the triangles of the object's mesh using the indices pointing to specific vertices in the vertex array.
         const triangleMeshVertexIndices = object[2];
+        // We set the number of vertices of the shape, which actually counts the re-use of vertices, hence why we use the length of the indices array.
+        this.vertexCountList = triangleMeshVertexIndices.length;
 
         // Generate a buffer and feed it the data so that we can render it.
         let vertexBuffer = this.buffering(vertexData, "ARRAY_BUFFER", "Float32Array");
@@ -178,11 +190,11 @@ class Canvas {
         {
             this.glContext.bindBuffer(this.glContext.ARRAY_BUFFER, this.bufferLibrary.vertexBuffer);
             this.glContext.vertexAttribPointer(this.pipelineAddresses.vertexPositionAddress, 
-                                        this.renderingParams.vv.vv_valuesPerIter, 
-                                        this.renderingParams.vv.vv_bufferDataType, 
-                                        this.renderingParams.vv.vv_normalize, 
-                                        this.renderingParams.vv.vv_stride, 
-                                        this.renderingParams.vv.vv_offset);
+                                               this.renderingParams.vv.vv_valuesPerIter, 
+                                               this.renderingParams.vv.vv_bufferDataType, 
+                                               this.renderingParams.vv.vv_normalize, 
+                                               this.renderingParams.vv.vv_stride, 
+                                               this.renderingParams.vv.vv_offset);
             // Attributes need to be enabled to work.
             this.glContext.enableVertexAttribArray(this.pipelineAddresses.vertexPositionAddress);
             }
@@ -190,11 +202,11 @@ class Canvas {
             {
             this.glContext.bindBuffer(this.glContext.ARRAY_BUFFER, this.bufferLibrary.colourBuffer);
             this.glContext.vertexAttribPointer(this.pipelineAddresses.vertexColourAddress, 
-                                        this.renderingParams.vc.vc_valuesPerIter, 
-                                        this.renderingParams.vc.vc_bufferDataType, 
-                                        this.renderingParams.vc.vc_normalize, 
-                                        this.renderingParams.vc.vc_stride, 
-                                        this.renderingParams.vc.vc_offset);
+                                               this.renderingParams.vc.vc_valuesPerIter, 
+                                               this.renderingParams.vc.vc_bufferDataType, 
+                                               this.renderingParams.vc.vc_normalize, 
+                                               this.renderingParams.vc.vc_stride, 
+                                               this.renderingParams.vc.vc_offset);
             // Attributes need to be enabled to work.
             this.glContext.enableVertexAttribArray(this.pipelineAddresses.vertexColourAddress);
             }
@@ -213,7 +225,7 @@ class Canvas {
         };
 
         // Fill the buffer with a float 32 array convertion of the vertex list. STATIC_DRAW is used to indicate that the content is to be writen once and used multiple times.
-        if (bufferType === "ELEMENT_ARRAY_BUFFER" & dataType === "Uint16Array"){
+        if (bufferType === "ELEMENT_ARRAY_BUFFER" && dataType === "Uint16Array"){
             this.glContext.bufferData(this.glContext.ELEMENT_ARRAY_BUFFER, new Uint16Array(data), this.glContext.STATIC_DRAW);
         } else {
             this.glContext.bufferData(this.glContext.ARRAY_BUFFER, new Float32Array(data), this.glContext.STATIC_DRAW);
@@ -238,9 +250,9 @@ class Canvas {
             // Draw the shape contained in the buffer. 
             // TRIANGLE_STRIP means the triangles in the mesh share vertices, TRIANGLES mean the triangles are made of the specified, sometimes shared vertices.
             this.glContext.drawElements(this.glContext.TRIANGLES, 
-                                    this.renderingParams.draw.draw_vertexCount, 
-                                    this.renderingParams.draw.draw_type, 
-                                    this.renderingParams.draw.draw_offset);
+                                        this.vertexCountList, 
+                                        this.renderingParams.draw.draw_type, 
+                                        this.renderingParams.draw.draw_offset);
         }
 
         this.objectTimeAlive[i] += deltaTime;
