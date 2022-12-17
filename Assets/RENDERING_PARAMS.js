@@ -20,7 +20,6 @@ function RENDERING_PARAMS(glContext){
 
     // The drawArrays function need to be given the number of vertices total and from which to start.
     const draw_offset = 0;
-    const draw_vertexCount = 36;
     const draw_type = glContext.UNSIGNED_SHORT;
 
     const paramsDict = {"projection": {"projec_fov": projec_fov,
@@ -37,7 +36,6 @@ function RENDERING_PARAMS(glContext){
                                "vc_stride": vc_stride,
                                "vc_offset": vc_offset,},
                         "draw": {"draw_offset": draw_offset,
-                                 "draw_vertexCount": draw_vertexCount,
                                  "draw_type": draw_type,},};
 
     return paramsDict;

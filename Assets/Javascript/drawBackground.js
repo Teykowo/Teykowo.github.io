@@ -2,37 +2,34 @@
 function drawBackground(canvas, deltaTime, timeSinceStart){
     
     // Optional block (if removed, increase base block number)
-    switch(true){
-        case (timeSinceStart%0.3 < timeSinceStart*0.1 && timeSinceStart < animationDelay):
-            var translateVector = [randInterval(-35., 35.), randInterval(-25., 25.), randInterval(-40., -22.)];
-            var rotationVector = [randInterval(0.1, 0.5), randInterval(0.1, 0.5), randInterval(0.1, 0.5)];
+    if (timeSinceStart%0.3 < timeSinceStart*0.1 && timeSinceStart < animationDelay){
+        let translateVector = [randInterval(-35., 35.), randInterval(-25., 25.), randInterval(-40., -22.)];
+        let rotationVector = [randInterval(0.1, 0.5), randInterval(0.1, 0.5), randInterval(0.1, 0.5)];
+        canvas.objectTimeAlive.push(0.0);
+        canvas.objectLifeSpan.push(randInterval(30.0, 100.0));
+        canvas.transVList.push(translateVector);
+        canvas.depthList.push(translateVector[2]);
+        canvas.rotVList.push(rotationVector);
+    } else {
+        // Refurbish the list of objects if needed.
+        while (canvas.transVList.length < canvas.objectCount){
+            let translateVector = [gapRandInterval(-25., -10, 10, 25.), randInterval(-15., 15.), randInterval(-40., -22.)];
+            let rotationVector = [randInterval(0.1, 0.5), randInterval(0.1, 0.5), randInterval(0.1, 0.5)];
             canvas.objectTimeAlive.push(0.0);
-            canvas.objectLifeSpan.push(randInterval(30.0, 100.0));
+            canvas.objectLifeSpan.push(randInterval(10000.0, 10000.0));
             canvas.transVList.push(translateVector);
             canvas.depthList.push(translateVector[2]);
             canvas.rotVList.push(rotationVector);
-            break;
-
-        default:
-            // Refurbish the list of objects if needed.
-            while (canvas.transVList.length < canvas.objectCount){
-                var translateVector = [randInterval(-25., 25.), randInterval(-15., 15.), randInterval(-40., -22.)];
-                var rotationVector = [randInterval(0.1, 0.5), randInterval(0.1, 0.5), randInterval(0.1, 0.5)];
-                canvas.objectTimeAlive.push(0.0);
-                canvas.objectLifeSpan.push(randInterval(10000.0, 10000.0));
-                canvas.transVList.push(translateVector);
-                canvas.depthList.push(translateVector[2]);
-                canvas.rotVList.push(rotationVector);
-            };
-            break;
+        };
     }
+
 
     if(timeSinceStart > animationDelay && timeSinceStart < (animationDelay + 0.03)){
         canvas.animationEnd = true;
     }
     
-    for (i = 0; i < canvas.transVList.length; i++){
-        var sumPosition = 0;
+    for (let i = 0; i < canvas.transVList.length; i++){
+        let sumPosition = 0;
         switch(true){
             case (timeSinceStart < animationDelay && i === 0):
                 sumPosition = 2;
