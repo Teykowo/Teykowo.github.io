@@ -35,7 +35,7 @@ class Canvas {
         this.vertexCountList = null;
         // Hold the decided, unmodified depth of the elements.
         this.depthList = [];
-        // Hold the rotation vectors of each elements.
+        // Hold the initial and continuous rotation vectors of each elements.
         this.rotVList = [];
         // Hold the life spanned by each object.
         this.objectTimeAlive = [0.0];
@@ -44,9 +44,13 @@ class Canvas {
         // Define whether to end the animation or not.
         this.animationEnd = false;
 
+        // Define the speed at which object should rotate, it is used as a dividend hence the bigger the value the slower the animations.
         this.rotationSpeed = 10;
+        // Hold the addresses of the shaders attributes and uniforms.
         this.pipelineAddresses = {};
+        // Hold the addresses of the buffers.
         this.bufferLibrary = {};
+        // Store the projection matrix which only changes dependant on the resolution and ratio.
         this.projectionMatrix = [];
     }  
 
@@ -59,6 +63,20 @@ class Canvas {
         this.resizeCanvas(width, height);
         // Setup the perspective using the ratio between *desired* width and height.
         this.setPerspectiveMatrix(width/height);
+    }
+
+    pushObjectData(translateVector, rotationVector, objectLifeSpan = null){
+        // Push data to the canvas arrays.
+        // Object life always starts at 0.
+        this.objectTimeAlive.push(0.0);
+        // Life span isn't a property shared by all objects, so only append if it's given.
+        if (objectLifeSpan) {
+            this.objectLifeSpan.push(objectLifeSpan);
+        }
+        this.transVList.push(translateVector);
+        // Store the original depth of the object which is the third component of the translate vector.
+        this.depthList.push(translateVector[2]);
+        this.rotVList.push(rotationVector);
     }
 
     setClearColour(clearColourArray){
@@ -235,13 +253,20 @@ class Canvas {
     }
 
     objectWiseRendering(i, deltaTime){
+        // In case no initial rotation is given, default to no rotation and update the rotation array.
+        if (this.rotVList[i].length != 2){
+            this.rotVList[i] = [[0, 0, 0], this.rotVList[i]];
+        }
+
         // For now we will draw in the center of the canvas, which means a simple identity matrix for the modelxview matrix.
         const modelxViewMatrix = mat4.create();
     
         // We need to move the object to where it's rendered depth-wise. As for all the mat4 functions, the first argument is the receiving matrix.
         mat4.translate(modelxViewMatrix, modelxViewMatrix, this.transVList[i]);
         // We animate our shape with these self explanatory functions. Here rotation increses the objects angle by how much time has passed.
-        mat4.rotate(modelxViewMatrix, modelxViewMatrix, this.objectTimeAlive[i]/this.rotationSpeed, this.rotVList[i]);
+        // We use two rotation, one is the initial rotation of the object, the other is time dependant and display continuous movement.
+        mat4.rotate(modelxViewMatrix, modelxViewMatrix, 1, this.rotVList[i][0]);
+        mat4.rotate(modelxViewMatrix, modelxViewMatrix, this.objectTimeAlive[i]/this.rotationSpeed, this.rotVList[i][1]);
     
         // Set the shader ModelxView uniforms, since it depends on the object's.
         this.glContext.uniformMatrix4fv(this.pipelineAddresses.ModelxViewMatrixAddress, false, modelxViewMatrix);
