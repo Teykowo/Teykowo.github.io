@@ -24,6 +24,15 @@
   }
 }
 
+@keyframes fadeInBackground{
+  0% {
+    opacity: 100%;
+  }
+  100%{
+    opacity: 90%;
+  }
+}
+
 @keyframes shrink{
   from{
     width: 100vw;
@@ -190,6 +199,11 @@ input:checked + .Switch_Slider:before{
   animation: shrink 1s 5s both, appear 1s 3.9s both;
 }
 
+/* Uncomment to get rid of the background flash before main body appearance */
+/* #Main_Background > canvas{
+  animation: appear 1s 5s both;
+} */ 
+
 #Main_Body_Section{
   display: flex;
   flex-direction: row;
@@ -201,8 +215,7 @@ input:checked + .Switch_Slider:before{
   flex-direction: column;
   justify-content: flex-start;
   background-color: var(--fg_colour_pre);
-  animation: shrink 1s 5s both, appear 1s 3.9s backwards;
-  opacity: 90%;
+  animation: shrink 1s 5s both, appear 1s 3.9s backwards, fadeInBackground 0.5s 9s forwards;
 }
 /* ------------------------------ -Header and Skills Block ------------------------------ */
 #Header_Holder{
