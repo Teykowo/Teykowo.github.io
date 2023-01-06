@@ -1,6 +1,4 @@
 # Teykowo.github.io
-WIP.
-
 Github Page for Teyko
 
 This project is a attempt at an online curriculum vitæ using github's generous offer of hosting a custom website for free.
