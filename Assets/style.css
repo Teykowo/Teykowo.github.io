@@ -311,7 +311,7 @@ a:visited {
 }
 
 #Skills_Block{
-  animation: appear 0.0s 7.6s both;
+  animation: appear 0.0s 8s both;
 }
 
 #Skills_Block > *{
@@ -341,11 +341,11 @@ a:visited {
 
 /* ----------------------------------- Projects block ----------------------------------- */
 #Projects_REPL{
-  animation: typing_REPL 0.5s 7.8s both, appear 0s 7.6s both;
+  animation: typing_REPL 0.5s 8.2s both, appear 0s 8s both;
 }
 
 #Projects_Block{
-  animation: appear 0s 8.4s both;
+  animation: appear 0s 8.7s both;
 }
 
 #Projects_Block > h3{
@@ -399,11 +399,11 @@ a:visited {
 }
 /* -------------------------------- certifications block -------------------------------- */
 #Certificates_REPL{
-  animation: typing_REPL 0.5s 8.6s both, appear 0.0s 8.4s both;
+  animation: typing_REPL 0.5s 8.9s both, appear 0.0s 8.7s both;
 }
 
 #Certificates_Block{
-  animation: appear 0s 9.2s both;
+  animation: appear 0s 9.4s both;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -420,6 +420,18 @@ a:visited {
 #Certificates_Block > div > h{
   white-space: pre;
   font-size: 1rem;
+}
+/* -------------------------------- certifications block -------------------------------- */
+#About_REPL{
+  animation: typing_REPL 0.5s 9.6s both, appear 0.0s 9.4s both;
+}
+
+#About_Block{
+  animation: appear 0s 10.1s both;
+}
+
+#About_Block > *{
+  margin-left: 1em;
 }
 /* ------------------------------------------------------------------------------------------------------ */
 
@@ -500,7 +512,7 @@ a:visited {
 /* ------------------------------------------------------------------------------------------------------ */
 
 #Final_REPL{
-  animation: appear 0s 9.2s both;
+  animation: appear 0s 10.1s both;
 }
 
 #Final_REPL > h{
