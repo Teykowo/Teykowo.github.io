@@ -37,6 +37,11 @@ function main(){
     canvasMainBackground.rotationSpeed = 20;
     canvasesList.push(canvasMainBackground);
 
+    const canvasRateIt = new Canvas('#RateIt_Cube')
+    canvasRateIt.setup([1, 1, 1, 1, 0], 'Assets/Buffer_DATA/cube.obj', 131, 131);
+    canvasRateIt.pushObjectData([0.0, 0.0, -4.5], [0.1, -0.2, -0.4]);
+    canvasesList.push(canvasRateIt);
+    
     const canvasPCO = new Canvas('#PCO_Cube')
     // The small poject cubes are of size 131px by 131px.
     canvasPCO.setup([1, 1, 1, 1, 0], 'Assets/Buffer_DATA/cube.obj', 131, 131);
