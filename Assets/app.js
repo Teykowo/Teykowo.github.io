@@ -22,7 +22,7 @@ function main(){
     // For each canvas, we create an isntance of our custom canvas object using the desired html canvas ID.
     const canvasBackground = new Canvas('#Background_Spawner')
     // We then set it up by giving it an RGBAV array that defines the clearing colour, and we also give it the path to the .obj file to render.
-    canvasBackground.setup([235/255, 236/255, 237/255, 1, 1], 'Assets/Buffer_DATA/cube.obj')
+    canvasBackground.setup([235/255, 236/255, 237/255, 1, 1], 'Assets/Buffer_DATA/cube.obj', undefined, undefined, [0, 0, 0, 1])
     // We push all relevent data (translation vector, [initial rotation vector and continuous rotation vector], as well as optionnally the object's lifespan).
     canvasBackground.pushObjectData([0.0, 0.0, -20.0], [0, 0, 0.3], animationDelay);
     // And we add the canvas to the list of currently running ones.
