@@ -98,6 +98,7 @@ function main(){
     window.addEventListener('resize', onResize);
 
     // Add an event listenener for each of the project cube, they will redirect to the project they each talk about on click.
+    canvasRateIt.HTMLCanvas.addEventListener('click', function(){window.open("https://github.com/Teykowo/Rate.It")})
     canvasPCO.HTMLCanvas.addEventListener('click', function(){window.open("Assets/img/PCO_Paper.pdf")})
     canvasHunter.HTMLCanvas.addEventListener('click', function(){window.open("https://github.com/Teykowo/Reinforcement-Learning-Hunter")})
     canvasAoC.HTMLCanvas.addEventListener('click', function(){window.open("https://github.com/Teykowo/AdventOfCode-One_Language_A_Day")})
