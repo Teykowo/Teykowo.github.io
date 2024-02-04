@@ -386,7 +386,7 @@ a:visited {
 .Projects_Holder > canvas:hover{
   cursor: pointer;
 }
-#Iforme_Cube:hover, #RateIt_Cube:hover{
+#Iforme_Cube:hover{
   cursor: default;
 }
 
