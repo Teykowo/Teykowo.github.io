@@ -37,6 +37,11 @@ function main(){
     canvasMainBackground.rotationSpeed = 20;
     canvasesList.push(canvasMainBackground);
 
+    const canvasArsMagicaHelper = new Canvas('#ArsMagicaHelper_Cube')
+    canvasArsMagicaHelper.setup([1, 1, 1, 1, 0], 'Assets/Buffer_DATA/cube.obj', 131, 131);
+    canvasArsMagicaHelper.pushObjectData([0.0, 0.0, -4.5], [-0.3, -0.2, 0.1]);
+    canvasesList.push(canvasArsMagicaHelper);
+
     const canvasRateIt = new Canvas('#RateIt_Cube')
     canvasRateIt.setup([1, 1, 1, 1, 0], 'Assets/Buffer_DATA/cube.obj', 131, 131);
     canvasRateIt.pushObjectData([0.0, 0.0, -4.5], [0.1, -0.2, -0.4]);
@@ -98,6 +103,7 @@ function main(){
     window.addEventListener('resize', onResize);
 
     // Add an event listenener for each of the project cube, they will redirect to the project they each talk about on click.
+    canvasArsMagicaHelper.HTMLCanvas.addEventListener('click', function(){window.open("https://teykowo.github.io/Assets/Sub_Hosts/Ars-Magica-Enchanted-Items-Maker/index.html")})
     canvasRateIt.HTMLCanvas.addEventListener('click', function(){window.open("https://github.com/Teykowo/Rate.It")})
     canvasPCO.HTMLCanvas.addEventListener('click', function(){window.open("Assets/img/PCO_Paper.pdf")})
     canvasHunter.HTMLCanvas.addEventListener('click', function(){window.open("https://github.com/Teykowo/Reinforcement-Learning-Hunter")})

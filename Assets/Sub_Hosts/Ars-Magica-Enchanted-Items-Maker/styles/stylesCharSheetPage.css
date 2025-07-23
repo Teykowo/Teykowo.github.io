@@ -1,0 +1,155 @@
+#container_flex_persos{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+}
+
+input, select, button{
+    background-color: antiquewhite;
+}
+
+fieldset{
+    width: 32rem;
+}
+
+.flex_form_container{
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem; 
+    margin: 1rem 0 0 0;
+    align-items: center;
+}
+
+input[type=number]{
+    width: 2rem;
+}
+
+h4{
+    margin: 0.5rem 0 -0.5rem 0;
+}
+
+em{
+    white-space: pre-line;
+    text-align: center;
+}
+
+input[type=button]{
+    width: 2rem;
+    height: 2rem;
+    color: black;
+}
+
+#v_and_v_fieldset{
+    display: flex;
+    flex-direction: row;
+    gap: 12rem;
+}
+
+#v_and_v_fieldset > .flex_form_global_container > .flex_form_container > select{
+    margin-right: -14rem;
+}
+
+.flex_form_global_container{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.flex_form_global_container > .flex_form_container > select{
+    width: 14rem;
+}
+
+#comp_fieldset{
+    height: 16rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+
+.flex_form_comp_container, .flex_form_focus_container{
+    width: 30rem;
+    min-width: 30rem;
+    height: 2rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    background-color: antiquewhite;
+    border: double black;
+}
+
+.flex_form_comp_container > h4, .flex_form_focus_container > h4{
+    width: 10rem;
+}
+
+.flex_form_comp_container > .flex_form_container, .flex_form_focus_container > .flex_form_container{
+    margin: 0 0 0 0;
+}
+
+#arts_fieldset{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    height: 16rem;
+}
+
+#arts_fieldset > div{
+    margin: 0 0 0 0;
+    height: 19%;    
+}
+
+#arts_fieldset > div > h4{
+    width: 5rem;  
+}
+
+.flex_form_focus_container > .flex_form_container > select{
+    width: 150px;
+}
+
+#container_enchant_redirect_buttons{
+    width: 32rem;
+    height: 13rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.enchant_redirect_buttons{
+    min-width: 9rem;
+    min-height: 9rem;
+    width: 9rem;
+    height: 9rem;
+    margin: 1rem 0 0 1rem;
+    font-size: 1rem;
+    font-weight: 900;
+}
+.enchant_redirect_buttons:hover{
+    min-width: 10rem;
+    min-height: 10rem;
+    width: 10rem;
+    height: 10rem;
+    margin: 0.5rem -0.5rem 0rem 0.5rem;
+    font-size: 1.1rem;
+    font-weight: 900;
+}
+.enchant_redirect_buttons:active{
+    min-width: 9rem;
+    min-height: 9rem;
+    width: 9rem;
+    height: 9rem;
+    margin: 1rem 0 0 1rem;
+    font-size: 1rem;
+    font-weight: 900;
+}
+
+@media (max-width : 69rem){
+    #container_flex_persos{
+        flex-direction: column;
+        gap: 1rem;
+    } 
+}
+@media (max-width : 40rem){
+    #v_and_v_fieldset{
+        flex-direction: column;
+        gap: 1rem;
+    } 
+}

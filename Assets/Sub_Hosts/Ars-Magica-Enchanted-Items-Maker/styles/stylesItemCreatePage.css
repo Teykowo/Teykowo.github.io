@@ -1,0 +1,323 @@
+#container_item{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: top;
+}
+
+#item_card{
+    width: fit-content;
+    max-width: 100rem;
+    height: fit-content;
+    border-radius: 20px;
+    border: 5px solid black;
+    display: flex;
+}
+
+.destroyed_text{
+    position: absolute;
+    color: #b7442d;
+    font-size: 10rem;
+    font-family: sans-serif;
+    align-self: center;
+    left: 50%;
+    transform: translate(-48%, 0);
+    z-index: -1;
+}
+
+#item_info{
+    width: 24rem;
+    height: fit-content;
+    /* max-height: 40rem; */
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-left: 1rem;
+}
+
+#item_info > input{
+    margin-top: 0.2rem;
+    width: 45%;
+}
+#item_info > label{
+    margin-top: 1rem;
+}
+#item_info > h4{
+    margin-top: 1rem;
+}
+
+#item_info > div{
+    margin-top: 0.2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: fit-content;
+}
+#item_info > div > input{
+    margin-top: 0.2rem;
+    width: fit-content;
+    max-width: 22rem;
+}
+#item_info > div > select{
+    margin-top: 0.2rem;
+    width: fit-content;
+    max-width: 22rem;
+}
+#item_info > div > textarea{
+    margin: 0.2rem 0 1rem 0;
+    width: 22rem;
+    height: 9rem;
+    max-width: 22rem;
+    max-height: 12rem;
+}
+#item_info > div > label{
+    margin-top: 1rem;
+    width: fit-content;
+    max-width: 22rem;
+}
+
+#enchant_card_holder{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: self-start;
+    width: fit-content;
+    max-width: 64rem;
+    height: fit-content;
+    margin: 1rem 0 0 0;
+}
+
+.enchant_card{
+    width: 30rem;
+    min-height: 35rem;
+    height: fit-content;
+    border-radius: 20px;
+    border: 5px solid black;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    margin: 0 0 1rem 0;
+    padding: 0.5rem 0.5rem 0 0.5rem;
+}
+.enchant_card > div{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-bottom: 0.3rem;
+}
+.enchant_card > div > label{
+    padding-right: 0.2rem;
+}
+.enchant_card > .textarea{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+}
+.enchant_card > .enchant_delete_button{
+    position: absolute;
+    transform: translate(28rem, 0);
+}
+.enchant_card > .textarea > textarea{
+    max-width: 29.5rem;
+    height: 3rem;
+    max-height: 12rem;
+}
+.enchant_sub_div{
+    margin-left: -0.2rem;
+}
+.enchant_sub_div > h4{
+    margin: 0.02rem 0 0 0;
+    padding-left: 0.2rem;
+}
+.enchant_sub_div > div > label{
+    padding-left: 0.2rem;
+}
+
+.enchant_card > .spend_season_button{
+    width: 25.5rem;
+    height: 2.5rem;
+    align-self: center;
+    margin-bottom: 0.3rem;
+}
+.enchant_card > .spend_season_button:hover{
+    min-width: 25.9rem;
+    min-height: 2.9rem;
+    width: 25.9rem;
+    height: 2.9rem;
+    margin: -0.2rem -0.2rem 0.1rem -0.2rem;
+}
+.enchant_card > .spend_season_button:active{
+    min-width: 25.1rem;
+    min-height: 2.3rem;
+    width: 25.1rem;
+    height: 2.3rem;
+    margin: 0.1rem 0.1rem 0.4rem 0.1rem;
+}
+
+.season_summary_field {
+    max-width: 29.5rem;
+    min-width: 29.5rem;
+    /* height: 4.8rem; */
+    height: 20.8rem;
+    /* max-height: 6rem; */
+    margin: 0 0 0.4rem 0;
+}
+
+.spent_seasons_text{
+    align-self: center;
+    margin: 0 0 0.4rem 0;
+}
+
+#new_enchant_button{
+    width: 8rem;
+    height: 8rem;
+    border-radius: 20px;
+    border: 5px solid black;
+    margin: 2rem 1rem 0 1rem;
+}
+#new_enchant_button:hover{
+    min-width: 9rem;
+    min-height: 9rem;
+    width: 9rem;
+    height: 9rem;
+    margin: 1.5rem 0.5rem -0.5rem 0.5rem;
+}
+#new_enchant_button:active{
+    min-width: 7.6rem;
+    min-height: 7.6rem;
+    width: 7.6rem;
+    height: 7.6rem;
+    margin: 2.2rem 1.2rem 0.2rem 1.2rem;
+}
+
+dialog{
+    position: absolute;
+    width: 32rem;
+    height: 46rem;
+    display: flex;
+    flex-direction: column;
+    background-color: antiquewhite;
+}
+
+.checkbox{
+    display: flex;
+}
+
+#v_and_v_season{
+    flex-direction: column;
+}
+
+#v_and_v_season > div{
+    margin-bottom: 0;
+}
+
+.season_modal > h4{
+    align-self: center;
+    margin: 0.5rem 0 0.5rem 0;
+}
+
+.season_modal > div > label {
+    padding-right: 0.2rem;
+}
+
+.season_bonus_holder{
+    margin: 0.5rem 0 0.8rem 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.season_bonus_holder > h4{
+    margin: 0.3rem 0.3rem 0.1rem 0;
+}
+.season_bonus_holder > div{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    max-height: 3rem;
+    margin-bottom: 0;
+}
+.season_bonus_holder > div > .checkbox{
+    display: flex;
+    flex-direction: row-reverse;
+    height: 1rem;
+    margin-right: 0.3rem;
+}
+
+dialog > div{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-bottom: 0.3rem;
+}
+dialog > div > div{
+    margin: 0 0 0.3rem 0;
+}
+.assistant_holder {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+dialog > .number{
+    display: block;
+    margin: 0 0 0.3rem 0;
+}
+
+.season_bottom_button_holder{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: auto;
+}
+.season_bottom_button_holder > input[type=button]{
+    width: 7rem;
+    height: 2rem;
+    margin: 0 0 0 0;
+}
+.season_bottom_button_holder > input[type=button]:hover{
+    min-width: 7.6rem;
+    min-height: 2.6rem;
+    width: 7.6rem;
+    height: 2.6rem;
+    margin: -0.3rem -0.3rem -0.3rem -0.3rem;
+}
+.season_bottom_button_holder > input[type=button]:active{
+    min-width: 6.6rem;
+    min-height: 1.6rem;
+    width: 6.6rem;
+    height: 1.6rem;
+    margin: 0.2rem 0.2rem 0.2rem 0.2rem;
+}
+
+#dice_roller_holder{
+    align-self: center;
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+#dice_roller_holder > div{
+    display: flex;
+    align-items: center;
+}
+#dice_roller_holder > div > input{
+    width: 6rem;
+    height: 6rem;
+    font-size: 4rem;
+}
+#dice_roller_holder > div > input:hover{
+    cursor: pointer;
+}
+
+.risk_factor_slide_indicator{
+    position: absolute;
+    transform: translate(5);
+    animation: 1s ease-in-out forwards addNumber;
+}
+@keyframes addNumber {
+  from {font-size: 2rem; top: 22.8rem; left: 10rem; opacity: 100%;}
+  to   {font-size: 5rem; top: 27.2rem; left: 15.7rem; opacity: 0%;}
+}
