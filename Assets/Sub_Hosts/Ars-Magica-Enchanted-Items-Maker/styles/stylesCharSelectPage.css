@@ -73,7 +73,7 @@ body{
     min-height: 11rem;
     width: 11rem;
     height: 11rem;
-    margin: 4rem 0 0 1.5rem;
+    margin: 4rem 0 -0.5rem 1.5rem;
     border-radius: 500px;
     font-size: 7rem;
     color: rgba(206, 206, 206, 0.856);
@@ -83,7 +83,7 @@ body{
     min-height: 9rem;
     width: 9rem;
     height: 9rem;
-    margin: 5rem 0 0 2.5rem;
+    margin: 5rem 0 0.5rem 2.5rem;
     font-size: 6rem;
     color: rgba(180, 180, 180, 0.856);
 }
